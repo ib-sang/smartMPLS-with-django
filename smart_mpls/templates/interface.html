@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h2 class="card-title">{{ device.name}} - ({{device.host}}) interface</h2>
+    <table class="table table-striped mt-4">
+        <thead class="thead-dark ">
+            <tr>
+                <th>Interface name</th>
+                <th>Description</th>
+                <th>Enabled ?</th>
+                <th>Up ?</th>
+                <th>Router on/of ?</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for interface_name, interface in interfaces.items %}
+            <form action="{% url 'device' device.id %}" id="{{ interface_name }}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="interface_name" value="{{ interface_name }}">
+                <input type="hidden" name="enable" value="{{interface.is_enable|yesno:" False,True " }}">
+            </form>
+            <tr>
+                <td>{{ interface_name }}</td>
+                <td>{{ interface.description }}</td>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="customCheck1" name="" id="" {% if interface.is_enable%} checked {% endif %}>
+                        <label class="custom-control-label" for="customCheck1"></label>
+                    </div>
+                </td>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="customCheck1" name="" id="" {% if interface.is_up%} checked {% endif %}>
+                        <label class="custom-control-label" for="customCheck1"></label>
+                    </div>
+                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="" id="" {% if interface.is_up%} checked {% endif %}>
+                </td>
+                <td>
+                    <button type="submit" form="{{ interface_name }}" class="btn btn-primary">router</button>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}
