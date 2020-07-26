@@ -5,7 +5,7 @@
     <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
     {% endif %}    
     <div class="card-body">
-        <form method="POST" action="{% url 'add_vrf'%}">
+        <form method="POST" action="{% url 'add_vrf_device' device.id %}">
             {% csrf_token %}
             {{ vrf_form }}
             <div class="form-group mt-3">

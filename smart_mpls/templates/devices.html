@@ -23,7 +23,7 @@
                 <td>{{ device.id }}</td>
                 <td> <a href="{% url 'device' device.id %}"> {{ device.name }}</a></td>
                 <td>{{ device.host }}</td>
-                <td><a href="{% url 'add_vrf' device.id %}"> vrf +</a></td>
+                <td><a href="{% url 'add_vrf_device' device.id %}"> vrf +</a></td>
             </tr>
             {% endfor %}
         </tbody>

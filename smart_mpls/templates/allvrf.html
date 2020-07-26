@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>{{ title }}</h1>
+    <p>This is {{name}}</p>
+    <p><a href="{% url 'add_vrf' %}">add new vrf </a></p>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>rd</th>
+                <th>route import</th>
+                <th>route export</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vrf in vrfs %}
+            <tr>
+                <td>{{ vrf.id }}</td>
+                <td> {{ vrf.name }}</td>
+                <td> {{ vrf.rd }}</td>
+                <td>{{ vrf.routeImport }}</td>
+                <td>{{ vrf.routeExport }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

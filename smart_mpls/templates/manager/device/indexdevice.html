@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>the device</h1>
+    {% if request.session.success %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
+    {% endif %}
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}
+    <h1 class="title">We have  {{ number }} device{% if number > 1 %}s{% endif %}</h1>
+
+    <div class="md-2"><a href ="{% url 'add_device' %}"> Add new device </a></div>
+    <table class="table table-striped mt-4">
+        <thead class="thead-dark text-center" >
+            <tr>
+                <th>Name</th>
+                <th>Host</th>
+                <th>Type of device</th>
+                <th>Platform</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            {% for device in devices %}
+            <tr>
+                <td>{{ device.name }}</td>
+                <td>{{ device.host }}</td>
+                <td>{{ device.device_type }}</td>
+                <td>{{ device.plateform }}</td>
+                <td>
+                    <a href = "{% url 'edit_device' device.id %}" class="mr-3 btn btn-primary">edit</a>
+                    <form action="{% url 'del_device' device.id %}"  method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-danger">delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+   
+
+</div>
+{% endblock %}

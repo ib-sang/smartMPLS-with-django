@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>the manager</h1>
+    {% if request.session.success %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
+    {% endif %}
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}
+    <h1 class="title">We have  {{ number }} {% if number > 1 %} topologies {% else %} topology {% endif %}</h1>
+
+    <div class="md-2"><a href ="{% url 'add_topo' %}"> Add new topology </a></div>
+    <table class="table table-striped mt-4">
+        <thead class="thead-dark text-center" >
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            {% for topo in topology %}
+            <tr>
+                <td>{{ topo.name}}</td>
+                <td>
+                    <a href = "{% url 'edit_topo' topo.id %}" class="mr-3 btn btn-primary">edit</a>
+                    <form action="{% url 'del_topo' topo.id %}"  method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-danger">delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+   
+
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>the manager</h1>
+    {% if request.session.success %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
+    {% endif %}
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}
+
+    <ul>
+        <li>
+            {{ device}}  <a href="{% url 'device' %}">device{% if device > 1%}s {% endif %}</a>
+        </li>
+        <li>
+            {{ access}}  <a href="{% url 'accesses' %}">{% if access > 1 %} accesses {% else %} access {% endif %}</a>
+        </li>
+        <li>
+            {{ topo}}  <a href="{% url 'topo' %}">{% if topo > 1%}topologies {%else%} topology {% endif %}</a>
+        </li>
+        <li>
+            {{ vrf}}  <a href="{% url 'vrf' %}">vrf{% if vrf > 1%}s{% endif %}</a>
+        </li>    
+    </ul>
+
+    
+
+</div>
+{% endblock %}

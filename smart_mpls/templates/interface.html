@@ -1,14 +1,22 @@
 {% extends "base.html" %} {% block content %}
 <div class="container mt-4">
     <h2 class="card-title">{{ device.name}} - ({{device.host}}) interface</h2>
+    {% if request.session.success %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
+    {% endif %}
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}
     <table class="table table-striped mt-4">
-        <thead class="thead-dark ">
+        <thead class="thead-dark text-center" >
             <tr>
                 <th>Interface name</th>
-                <th>Description</th>
                 <th>Enabled ?</th>
                 <th>Up ?</th>
-                <th>Router on/of ?</th>
+                <th>Add vrf </th>
+                <th>ip address </th>
+                <th>mask</th>
+                <th>Change ?</th>
             </tr>
         </thead>
         <tbody>
@@ -20,22 +28,38 @@
             </form>
             <tr>
                 <td>{{ interface_name }}</td>
-                <td>{{ interface.description }}</td>
                 <td>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="customCheck1" name="" id="" {% if interface.is_enable%} checked {% endif %}>
-                        <label class="custom-control-label" for="customCheck1"></label>
+                        <input type="checkbox" class=""  {% if interface.is_enable%} checked {% endif %}>
                     </div>
                 </td>
                 <td>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="customCheck1" name="" id="" {% if interface.is_up%} checked {% endif %}>
-                        <label class="custom-control-label" for="customCheck1"></label>
+                        <input type="checkbox" class="" id="customCheck2"  {% if interface.is_up%} checked {% endif %}>
                     </div>
-                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="" id="" {% if interface.is_up%} checked {% endif %}>
                 </td>
                 <td>
-                    <button type="submit" form="{{ interface_name }}" class="btn btn-primary">router</button>
+                    <div class="custom-control custom-checkbox">
+                        <select class="" >
+                            <option class="">------------</option>
+                            {% for vrf in vrfs %}
+                            <option class="" value="{{ vrf.name }}">{{ vrf.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input type="text" class="" id="" placeholder="a.b.c.d"  name="ipadd{{ interface_name }}" >
+                    </div>
+                </td>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input type="text" class="" id="" placeholder="a.b.c.d" name="mask{{ interface_name }}">
+                    </div>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-primary">changed</button>
                 </td>
             </tr>
             {% endfor %}
