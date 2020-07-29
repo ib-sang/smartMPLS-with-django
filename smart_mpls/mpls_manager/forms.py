@@ -14,6 +14,15 @@ CHOICES_PLATEFORM = [
     ('cisco_iosxe', 'CISCO IOS XE')
 ]
 
+
+CHOICES_PROTOCOL = [
+    ('static', 'STATIC ROUTAGE'), 
+    ('rip', 'RIP verssion 2'),
+    ('eigrp', 'EIGRP'),
+    ('ospf', 'OSPF'),
+    ('bgp', 'BGP'),
+]
+
 class AddVRFForm(forms.Form):
     name = forms.CharField(label='name',widget=forms.TextInput(attrs={"class":"form-control","placeholder":"name for customer","name":"name","type":"text"}))
     rd = forms.CharField(label='rd', widget=forms.TextInput(attrs={"class":"form-control","placeholder":"asm:asm or a.b.c.d:asm","name":"rd","type":"text","value":""}))
@@ -77,7 +86,7 @@ class VRFForm(forms.ModelForm):
     
     class Meta:
         model = Vrf
-        fields = ["name", "rd", "routeImport", "routeExport", "devices"]
+        fields = ["name", "rd", "routeImport", "routeExport", "routing","devices"]
         widgets = {
                     "name" : forms.TextInput(attrs={'class':'form-control'}),
                     "rd" :  forms.TextInput(attrs={'class':'form-control '}),
@@ -85,5 +94,6 @@ class VRFForm(forms.ModelForm):
                     "routeExport" :  forms.TextInput(attrs={'class':'form-control '}),
                 }
         widget = {
-            "devices" : forms.ModelMultipleChoiceField(queryset = Access.objects.all())
+            "devices" : forms.ModelMultipleChoiceField(queryset = Access.objects.all()),
+            "routing" : forms.ChoiceField(label='protocol routage ', choices=CHOICES_PROTOCOL,  initial="static", required=True),
         } 

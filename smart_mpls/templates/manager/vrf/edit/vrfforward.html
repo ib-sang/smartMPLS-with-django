@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>Add a new access management </h1>
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}    
+    <div class="card-body">
+        <form action=""  method="post">
+            {% csrf_token %}
+            <table class="table table-striped mt-4">
+                <thead class="thead-dark text-center" >
+                    <tr>
+                        <th>Device</th>
+                        <th>Network</th>
+                        <th>Mask</th>
+                        <th>Interface</th>
+
+                    </tr>
+                </thead>
+                <tbody>    
+                    {% for device, interface_name in forward_interfaces.items %}                
+                        <tr>
+                            <td>{{ device }}</td>
+                            <td>
+                                <div class="">
+                                    <input type="text" class="form-control" placeholder="a.b.c.d" name="net{{ device }}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="">
+                                    <input type="text" class="form-control" placeholder="a.b.c.d" name="mask{{ device }}">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <select class="custom-select" name="int{{ device }}">
+                                        {% for interface in interface_name %}
+                                        <option value="{{ interface }}" >{{ interface }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                        </tr>
+                    {% endfor %}
+                </tbody>    
+            </table>
+            <button type="submit" class="btn btn-primary btn-block" >vrf forwarded</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

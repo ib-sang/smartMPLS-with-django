@@ -11,18 +11,21 @@ from mpls_manager.models import *
 INTERFACE_STATS_CHANGE_TEMPLATE = """interface (interface_name)
 """
 
-def devices(request) -> HttpResponse:
-    devices=Device.objects.all()
+
+
+
+def monitoring(request):
     content={
-    'devices': devices,
-    'title':'Hello stream',
-    'name':'ib'
+        "title " : "monitoring",
+        "path" : "monitor",
     }
-    return render(request, 'devices.html',content)
+    return render(request,"monitoring/index.html",content)
 
 
-def get_device_stats(request,device_id):
-    device=Device.objects.get(id=device_id)
+
+
+def get_device_stats(request,vrf_id):
+    device=Device.objects.get(id=vrf_id)
     if request.method=='POST':
         interface_name = request.POST.get('interface_name')
         enable_interface = request.POST.get('enable')
@@ -55,32 +58,30 @@ def get_device_stats(request,device_id):
         return HttpResponse("hello")
         
     else:   
-        #driver = get_network_driver(device.napalm_driver)
-        #host = device.host
-        #username = device.username
-        #password = device.password
-        
-        device_run = device.connect
-        return HttpResponse(device.napalm_driver)
-        #interfaces = device_run.get_interfaces()
-        
-        #try:
-        #    device_run.open()
-        #    interfaces = device_run.get_interfaces()
-        #except Exception as e:
-        #    request.session['error'] = "Cannot connect to "+device.host
-        #    request.session.set_expiry(10)
-        #    return redirect('devices')
-        #with driver(host, username, password, optional_args={}) as device_run:
-        #    interfaces = device_run.get_interfaces()
+        driver = get_network_driver(device.napalm_driver)
+        host = device.host
+        username = device.username
+        password = device.password
+                
+        try:
+            device_run.open()
+            interfaces = device_run.get_interfaces()
+        except Exception as e:
+            request.session['error'] = "Cannot connect to "+device.host
+            request.session.set_expiry(10)
+            return redirect('devices')
+        with driver(host, username, password, optional_args={}) as device_run:
+            interfaces = device_run.get_interfaces()
         vrfs = Vrf.objects.all()
         content={
             'device':device,
             'interfaces': interfaces,
             'vrfs' : vrfs,
+            "title" : "monitoring",
+            'path' : 'monitoring'
         }
         print(device)
-        return render(request, 'interface.html',content)
+        return render(request, 'monitoring/vrf/interface.html',content)
 
 def interface(request):
     return HttpResponse('<h2>les interface </h2>')

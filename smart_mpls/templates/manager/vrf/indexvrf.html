@@ -7,13 +7,17 @@
     {% if request.session.error %}
     <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
     {% endif %}
-    <h1 class="title">We have  {{ number }} {% if number > 1 %} topologies {% else %} topology {% endif %}</h1>
+    <h1 class="title">We have  {{ number }} customer{% if number > 1 %}s{% endif %}</h1>
 
     <div class="md-2"><a href ="{% url 'add_vrf' %}"> Add new vrf </a></div>
     <table class="table table-striped mt-4">
         <thead class="thead-dark text-center" >
             <tr>
                 <th>Name</th>
+                <th>Route dis</th>
+                <th>Route import</th>
+                <th>Route export</th>
+                <th>device</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,9 +25,13 @@
             {% for vrf in vrfs %}
             <tr>
                 <td>{{ vrf.name}}</td>
+                <td>{{ vrf.rd}}</td>
+                <td>{{ vrf.routeImport}}</td>
+                <td>{{ vrf.routeExport}}</td>
+                <td>{{ vrf.devices }}</td>
                 <td>
                     <a href = "{% url 'add_vrf' %}" class="mr-3 btn btn-primary">edit</a>
-                    <form action="{% url 'add_vrf' %}"  method="post" class="d-inline">
+                    <form action="{% url 'del_vrf' vrf.id %}"  method="post" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="_method" value="delete">
                         <button type="submit" class="btn btn-danger">delete</button>

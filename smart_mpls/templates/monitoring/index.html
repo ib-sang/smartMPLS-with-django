@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>the monitoring</h1>
+    {% if request.session.success %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
+    {% endif %}
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}
+
+
+
+    <ul>
+        <li>
+             <a href="">interface</a>
+        </li> 
+    </ul>
+ 
+
+    
+
+</div>
+{% endblock %}

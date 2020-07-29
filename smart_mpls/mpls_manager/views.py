@@ -7,6 +7,13 @@ from netmiko import Netmiko
 from .models import *
 from .forms import *
 
+CHOICES_PROTOCOL = [
+    ('static', 'STATIC ROUTAGE'), 
+    ('rip', 'RIP verssion 2'),
+    ('eigrp', 'EIGRP'),
+    ('ospf', 'OSPF'),
+    ('bgp', 'BGP'),
+]
 
 
 def index(request)-> HttpResponse:
@@ -188,20 +195,21 @@ def add_device(request)-> HttpResponse:
     device_form = DeviceForm()
     content={
         'device_form' : device_form,
+        "title" : "device",
     }
     return render(request, 'manager/device/new/adddevice.html',content)
 
    
 def vrf(request) -> HttpResponse:
     vrf = Vrf.objects.all()
+    device_vrf= vrf[0].devices.all()
     number = vrf.count()
     content = {
         "vrfs" : vrf,
         "number" : number,
         "path":"manager",
         "title": 'manager',
-    }
-    
+    }    
     return render(request,"manager/vrf/indexvrf.html", content)
 
 
@@ -213,29 +221,21 @@ def add_vrf(request) :
             rd = request.POST["rd"]
             routeImport = request.POST["routeImport"]
             routeExport = request.POST["routeExport"]
-            devices = vrf_form.cleaned_data['devices']
-            params_all= {}
-            outputs=[]
+            
             config_commands = {
                     "ip vrf "+name,
                     "rd " +rd,
                     "route-target import " + routeImport,
                     "route-target export "+ routeExport
                 }
-            command = 'show ip vrf interf'
+            new_vrf = Vrf(name = name, rd = rd, routeImport = routeImport, routeExport = routeExport)
+            new_vrf.save()
+            devices = vrf_form.cleaned_data['devices']
             for device in devices:
-                device_run = Device.objects.get(name = device)
-                
-                params = {
-                    "host" : device_run.host,
-                    "username" : device_run.username,
-                    "password" : device_run.password,
-                    'device_type' : device_run.plateform,
-                }
-                params_all[device.name]= params
+                device_run = Device.objects.get(name = device)                
+                new_vrf.devices.add(device_run.device_run)
                 with ConnectHandler(**params) as device_conf:
-                    device_conf.send_config_set(config_commands)            
-            vrf_form.save()    
+                    device_conf.send_config_set(config_commands)
         return  HttpResponseRedirect('/manager/vrf')
     vrf_form = VRFForm()
     content={
@@ -247,7 +247,67 @@ def add_vrf(request) :
 
 
 def del_vrf(request, vrf_id):
-    return HttpResponse('hello vrf')   
+    vrf = Vrf.objects.get(id = vrf_id)
+    device_vrf = vrf.devices.all()
+    config_commands = {
+                    "no ip vrf  "+vrf.name,
+                }
+    for device in device_vrf:
+        with ConnectHandler(**device.params) as device_conf:
+            device_conf.send_config_set(config_commands)
+    request.session['error'] = vrf.name +" was deleted"
+    request.session.set_expiry(10)
+    vrf.delete()
+    return HttpResponseRedirect("/manager/vrf") 
+   
+   
+def in_vrf(request, vrf_id):
+    vrf = Vrf.objects.get(id = vrf_id)
+    device_vrf = vrf.devices.all()
+    if request.method =="POST":
+        interface_fors = request.POST["intPE1"]
+        network = request.POST["netPE1"]
+        mask = request.POST["maskPE1"]
+        config_commands = {
+                    "interface "+interface_fors,
+                    "ip vrf forwarding "+vrf.name,
+                    "ip address " +network + " "+mask,
+                    "no shutdown ",
+                }
+        for device in device_vrf:
+            with ConnectHandler(**device.params) as device_conf:
+                device_conf.send_config_set(config_commands)        
+        return HttpResponseRedirect('/manager/vrf')    
+    forward_interface = {}
+    for device in device_vrf:
+        driver = get_network_driver(device.napalm_driver)
+        host = device.host
+        username = device.username
+        password = device.password
+        
+        with driver(host, username, password, optional_args={}) as device_run:
+            interfaces = device_run.get_interfaces()
+        forward_interface[device] = interfaces       
+    content={
+        "devices" : device_vrf,
+        "forward_interfaces" : forward_interface,
+        'title': "interface provider edge",
+    }
+    return render(request,"manager/vrf/edit/vrfforward.html",content)
+   
+
+def routing_vrf(request, vrf_id):
+    vrf = Vrf.objects.get(id = vrf_id)
+    device_vrf = vrf.devices.all()
+    
+    content ={
+        "protocols" : CHOICES_PROTOCOL,
+        "devices" : device_vrf,
+        "title" : "routing for vrf",
+        "path" : "management",
+    }
+    return render(request,"manager/vrf/edit/vrfrouting.html",content)
+
    
 def add_vrf_device(request,device_id) -> HttpResponse:
     device=Device.objects.get(id=device_id)
@@ -281,6 +341,7 @@ def add_vrf_device(request,device_id) -> HttpResponse:
             vrf_form= AddVRFForm(request.POST)  
             if vrf_form.is_valid():
                 new_vrf = Vrf(name = name_vrf, rd = rd, routeImport = routeImport, routeExport = routeExport)
+                
                 new_vrf.save()    
             return  HttpResponseRedirect('/devices') 
         except Exception as e:

@@ -17,6 +17,7 @@
                 <th>Host</th>
                 <th>Type of device</th>
                 <th>Platform</th>
+                <th>Topology</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
                 <td>{{ device.host }}</td>
                 <td>{{ device.device_type }}</td>
                 <td>{{ device.plateform }}</td>
+                <td>{{ device.topology_ref }}</td>
                 <td>
                     <a href = "{% url 'edit_device' device.id %}" class="mr-3 btn btn-primary">edit</a>
                     <form action="{% url 'del_device' device.id %}"  method="post" class="d-inline">

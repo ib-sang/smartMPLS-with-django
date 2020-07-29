@@ -21,7 +21,7 @@
         </thead>
         <tbody>
             {% for interface_name, interface in interfaces.items %}
-            <form action="{% url 'device' device.id %}" id="{{ interface_name }}" method="post">
+            <form action="" id="{{ interface_name }}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="interface_name" value="{{ interface_name }}">
                 <input type="hidden" name="enable" value="{{interface.is_enable|yesno:" False,True " }}">

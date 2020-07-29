@@ -48,13 +48,34 @@ class Device(models.Model):
     def __str__(self):
         return self.name
 
-        
+    @property    
     def napalm_driver(self):
         return NAPALM_MAPPING[self.plateform]
 
 
     def netmiko_device_type(self) :
         return NETMIKO_MAPPING[self.plateform]
+    
+    
+    @property
+    def params(self):
+        params = {
+                    "host" : self.host,
+                    "username" : self.username,
+                    "password" : self.password,
+                    'device_type' : self.plateform,
+                }
+        return params
+
+
+    def config_device(self, **config_commands):
+        device = None
+        try:
+            with device.ConnectHandler(self.params) as device_conf:
+                device = device_conf.send_config_set(config_commands)
+        except Exception as e:
+            print(e) 
+        return device
 
     @property
     def username(self) -> str:
@@ -116,9 +137,10 @@ class Vrf(models.Model):
     rd = models.CharField(max_length=255)
     routeImport = models.CharField(max_length=255)
     routeExport = models.CharField(max_length=255)
+    routing = models.CharField(max_length=30, choices={('static', 'STATIC ROUTAGE'), 
+    ('rip', 'RIP version 2'), ('eigrp', 'EIGRP'), ('ospf', 'OSPF')}, default="static", blank=True)
     devices = models.ManyToManyField(Device, related_name='device', blank=True)
 
-    @property
     def __str__(self):
         return self.name  
     
