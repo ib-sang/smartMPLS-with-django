@@ -16,8 +16,6 @@ CHOICES_PLATEFORM = [
 
 
 CHOICES_PROTOCOL = [
-    ('static', 'STATIC ROUTAGE'), 
-    ('rip', 'RIP verssion 2'),
     ('eigrp', 'EIGRP'),
     ('ospf', 'OSPF'),
     ('bgp', 'BGP'),
@@ -69,16 +67,17 @@ class DeviceForm(forms.ModelForm):
     
     class Meta:
         model = Device
-        fields = ["name", "host", "device_type", "plateform", "management", "topology_ref"] 
+        fields = ["name", "host", "device_type", "plateform",  "management", "topology_ref"] 
         widgets = {
             "name" : forms.TextInput(attrs={'class':'form-control'}),
             "host" :  forms.TextInput(attrs={'class':'form-control mb-4'}),
         }  
         widget = {
             'device_type' : forms.ChoiceField(widget=forms.Select(attrs={"class":"form-control" } ), label='device_type', choices=CHOICES_TYPE, initial="router", required=True, ),
+            "protocol" : forms.ChoiceField(label='protocol backbone ', choices=CHOICES_PROTOCOL,  initial="bgp", required=True),            
             "plateform" : forms.ChoiceField(label='plateform', choices=CHOICES_PLATEFORM,  initial="cisco_ios", required=True),
             "management" : forms.ModelChoiceField(queryset=Access.objects.all()),
-            "topology_ref" : forms.ModelChoiceField(queryset=Topologies.objects.all(),widget=forms.Select(attrs={"class":"form-control" } ))
+            "topology_ref" : forms.ModelChoiceField(queryset=Topologies.objects.all(),widget=forms.Select(attrs={"class":"form-control" } )),
         }
       
 
@@ -86,7 +85,7 @@ class VRFForm(forms.ModelForm):
     
     class Meta:
         model = Vrf
-        fields = ["name", "rd", "routeImport", "routeExport", "routing","devices"]
+        fields = ["name", "rd", "routeImport", "routeExport", "devices"]
         widgets = {
                     "name" : forms.TextInput(attrs={'class':'form-control'}),
                     "rd" :  forms.TextInput(attrs={'class':'form-control '}),
@@ -95,5 +94,4 @@ class VRFForm(forms.ModelForm):
                 }
         widget = {
             "devices" : forms.ModelMultipleChoiceField(queryset = Access.objects.all()),
-            "routing" : forms.ChoiceField(label='protocol routage ', choices=CHOICES_PROTOCOL,  initial="static", required=True),
         } 

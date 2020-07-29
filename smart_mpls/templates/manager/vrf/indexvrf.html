@@ -17,7 +17,6 @@
                 <th>Route dis</th>
                 <th>Route import</th>
                 <th>Route export</th>
-                <th>device</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -28,7 +27,6 @@
                 <td>{{ vrf.rd}}</td>
                 <td>{{ vrf.routeImport}}</td>
                 <td>{{ vrf.routeExport}}</td>
-                <td>{{ vrf.devices }}</td>
                 <td>
                     <a href = "{% url 'add_vrf' %}" class="mr-3 btn btn-primary">edit</a>
                     <form action="{% url 'del_vrf' vrf.id %}"  method="post" class="d-inline">

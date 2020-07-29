@@ -20,6 +20,7 @@ urlpatterns = [
     path('manager/vrf', views.vrf, name='vrf'),
     path('manager/vrf/add', views.add_vrf, name='add_vrf'),
     path('manager/vrf/forwarding/<int:vrf_id>', views.in_vrf, name='int_vrf'),
+    path('manager/vrf/vrfrouting/<int:vrf_id>', views.routing_vrf, name='routing_vrf'),
     path('manager/vrf/delete/<int:vrf_id>', views.del_vrf, name='del_vrf'),
 
     path('manager/device/vrf/<int:device_id>', views.add_vrf_device, name='add_vrf_device'),

@@ -19,13 +19,20 @@ params = {
         'password' : 'admin',
         'device_type' : 'cisco_ios'
     }
-command='show ip vrf interf'
+command='show ip protocols | section bgp'
 #net_connect = Netmiko(**params)
 #print(net_connect.find_prompt())
 tab=[]
-#with ConnectHandler(**params) as device_conf:
-#    output = device_conf.send_command(command)
-
+with ConnectHandler(**params) as device_conf:
+    output = device_conf.send_command(command)
+    
+first, *others = output.splitlines()
+leng= len(first)
+protocol_backbone = first[21:leng -1]
+#print(output)
+print(first)
+print(protocol_backbone)
+#print(others)
 #output = output.split()  
   
 #leng= len(output)
@@ -62,29 +69,3 @@ j=0
 #        i=i+3
 #    j=j+1
 
-
-
-interf ={
-    "PE1": {
-        'Ethernet0/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:01:26:54:00:06', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 100}, 
-        'GigabitEthernet0/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:01:26:54:00:08', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000}, 
-        'GigabitEthernet1/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:01:26:54:00:1C', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet2/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:01:26:54:00:38', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet3/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:01:26:54:00:54', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet4/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:01:26:54:00:70', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet5/0': {'is_enabled': True, 'is_up': True, 'description': '', 'mac_address': 'CA:01:26:54:00:8C', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000}},
-    "PE2": {
-        'Ethernet0/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:02:05:0C:00:06', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 100},
-        'GigabitEthernet0/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:02:05:0C:00:08', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet1/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:02:05:0C:00:1C', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet2/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:02:05:0C:00:38', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet3/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:02:05:0C:00:54', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000}, 
-        'GigabitEthernet4/0': {'is_enabled': False, 'is_up': False, 'description': '', 'mac_address': 'CA:02:05:0C:00:70', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000},
-        'GigabitEthernet5/0': {'is_enabled': True, 'is_up': True, 'description': '', 'mac_address': 'CA:02:05:0C:00:8C', 'last_flapped': -1.0, 'mtu': 1500, 'speed': 1000}
-        }
-}
-
-for device,devices in interf:
-    print(device)
-    for interface in devices:
-        print(interface)

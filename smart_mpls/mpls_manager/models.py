@@ -40,7 +40,7 @@ class Device(models.Model):
     host = models.CharField(max_length=70)
     device_type = models.CharField(max_length=30, choices={('router' , 'Router'), ('switch', 'Switch'),
      ('firewall', 'Firewall') ,}, default="router", blank=True)
-    plateform = models.CharField(max_length=30, choices={('cisco_ios', 'CISCO IOS'), 
+    plateform = models.CharField(max_length=30, choices={('cisco_ios', 'CISCO IOS'),
     ('cisco_iosxe', 'CISCO IOS XE')}, default="cisco_ios", blank=True)
     management =  models.ForeignKey(Access, on_delete=models.CASCADE, null=True)
     topology_ref =  models.ForeignKey(Topologies, on_delete=models.CASCADE, null=True)
@@ -56,7 +56,6 @@ class Device(models.Model):
     def netmiko_device_type(self) :
         return NETMIKO_MAPPING[self.plateform]
     
-    
     @property
     def params(self):
         params = {
@@ -71,15 +70,17 @@ class Device(models.Model):
     def config_device(self, **config_commands):
         device = None
         try:
-            with device.ConnectHandler(self.params) as device_conf:
+            with ConnectHandler(self.params) as device_conf:
                 device = device_conf.send_config_set(config_commands)
         except Exception as e:
             print(e) 
         return device
 
+
     @property
-    def username(self) -> str:
+    def username(self):
         return self.management.username
+    
     
     @property
     def password(self):
@@ -102,9 +103,17 @@ class Device(models.Model):
             print(e)
         return device
 
-
-        
     @property
+    def routing_backbone(self):
+        command='show ip protocols | section bgp' 
+        with ConnectHandler(**self.params) as device_conf:
+            output = device_conf.send_command(command)
+        first, *others = output.splitlines()
+        leng= len(first)
+        protocol_backbone = first[21:leng -1]
+        return protocol_backbone
+
+
     def vrf_ip_interface(self):
         leng= len(output)
         i = 4
@@ -126,7 +135,7 @@ class Interface(models.Model):
     name = models.CharField(max_length=255)
     ingress = models.BooleanField(default=False)
     egress = models.BooleanField(default=False)
-    backbone = models.BooleanField(default=False)    
+    backbone = models.BooleanField(default=False)   
     
     def __str__(self):
         return self.name
@@ -137,8 +146,6 @@ class Vrf(models.Model):
     rd = models.CharField(max_length=255)
     routeImport = models.CharField(max_length=255)
     routeExport = models.CharField(max_length=255)
-    routing = models.CharField(max_length=30, choices={('static', 'STATIC ROUTAGE'), 
-    ('rip', 'RIP version 2'), ('eigrp', 'EIGRP'), ('ospf', 'OSPF')}, default="static", blank=True)
     devices = models.ManyToManyField(Device, related_name='device', blank=True)
 
     def __str__(self):

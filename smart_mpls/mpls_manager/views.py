@@ -158,13 +158,14 @@ def device(request):
     
     return render(request,"manager/device/indexdevice.html", content)
 
+
 def edit_device(request, device_id) -> HttpResponse: 
     device = Device.objects.get(id=device_id)
     if request.method== "POST":
         form = DeviceForm(request.POST, instance=device)
         if form.is_valid():
             device.save()
-            request.session['success'] = "You have modified a topology : " + request.POST["name"]
+            request.session['success'] = "You have modified a device : " + request.POST["name"]
             request.session.set_expiry(10)    
         return HttpResponseRedirect("/manager/device")    
         
@@ -202,8 +203,9 @@ def add_device(request)-> HttpResponse:
    
 def vrf(request) -> HttpResponse:
     vrf = Vrf.objects.all()
-    device_vrf= vrf[0].devices.all()
+    #device_vrf= vrf[0].devices.all()
     number = vrf.count()
+    
     content = {
         "vrfs" : vrf,
         "number" : number,
@@ -222,21 +224,24 @@ def add_vrf(request) :
             routeImport = request.POST["routeImport"]
             routeExport = request.POST["routeExport"]
             
-            config_commands = {
+            config_commands = [
                     "ip vrf "+name,
                     "rd " +rd,
                     "route-target import " + routeImport,
                     "route-target export "+ routeExport
-                }
+            ]
             new_vrf = Vrf(name = name, rd = rd, routeImport = routeImport, routeExport = routeExport)
             new_vrf.save()
             devices = vrf_form.cleaned_data['devices']
             for device in devices:
-                device_run = Device.objects.get(name = device)                
-                new_vrf.devices.add(device_run.device_run)
-                with ConnectHandler(**params) as device_conf:
-                    device_conf.send_config_set(config_commands)
-        return  HttpResponseRedirect('/manager/vrf')
+                try:
+                    with ConnectHandler(**device.params) as device_conf:
+                        device_conf.send_config_set(config_commands)
+                        device_run = Device.objects.get(name = device)
+                        new_vrf.devices.add(device_run)
+                except Exception as e:
+                    pass
+        return  HttpResponseRedirect('/manager/vrf/forwarding/'+str(new_vrf.id))
     vrf_form = VRFForm()
     content={
         'form' : vrf_form,
@@ -265,28 +270,36 @@ def in_vrf(request, vrf_id):
     vrf = Vrf.objects.get(id = vrf_id)
     device_vrf = vrf.devices.all()
     if request.method =="POST":
-        interface_fors = request.POST["intPE1"]
-        network = request.POST["netPE1"]
-        mask = request.POST["maskPE1"]
-        config_commands = {
+        for device in device_vrf:
+            interface_fors = request.POST["int"+device.name]
+            network = request.POST["net"+device.name]
+            mask = request.POST["mask"+device.name]
+            config_commands = [
                     "interface "+interface_fors,
                     "ip vrf forwarding "+vrf.name,
                     "ip address " +network + " "+mask,
                     "no shutdown ",
-                }
-        for device in device_vrf:
+                ]
             with ConnectHandler(**device.params) as device_conf:
-                device_conf.send_config_set(config_commands)        
-        return HttpResponseRedirect('/manager/vrf')    
+                device_conf.send_config_set(config_commands)
+        return HttpResponseRedirect("/manager/vrf/vrfrouting/"+str(vrf.id))    
     forward_interface = {}
+    interfaces = {}
+    hosts =""
     for device in device_vrf:
         driver = get_network_driver(device.napalm_driver)
         host = device.host
         username = device.username
         password = device.password
+        try:
+            with driver(host, username, password, optional_args={}) as device_run:
+                interfaces = device_run.get_interfaces()
+        except Exception as e:
+            hosts = hosts + host +", "
+            print(e)
+            request.session['error'] = "deosn't connected of device : "+hosts
+            request.session.set_expiry(10)
         
-        with driver(host, username, password, optional_args={}) as device_run:
-            interfaces = device_run.get_interfaces()
         forward_interface[device] = interfaces       
     content={
         "devices" : device_vrf,
@@ -299,12 +312,101 @@ def in_vrf(request, vrf_id):
 def routing_vrf(request, vrf_id):
     vrf = Vrf.objects.get(id = vrf_id)
     device_vrf = vrf.devices.all()
-    
+    if request.method == "POST":
+        proto = request.POST["protocol"]
+        proto_backbone = device_vrf[0].routing_backbone
+        name = vrf.name
+        if proto == "eigrp":
+            as_number = request.POST["as_number"]
+            system = request.POST["system"]
+            config_commands = [
+                    "router "+ proto_backbone,
+                    "address-family ipv4 vrf  "+name,
+                    "redistribute eigrp "+system,
+                    "exit-address-family",
+                    "router "+proto+" "+as_number,
+                    "address-family ipv4 vrf  "+name,
+                    "autonomous-system "+system,
+                    "redistribute "+proto_backbone+" metric 1",
+                    
+            ]
+
+            for device in device_vrf:
+                host = device.name
+                network = request.POST["net"+host]
+                mask = request.POST["mask"+host]
+                config_commands.append("network " +network + " "+mask)
+                try:
+                    with ConnectHandler(**device.params) as device_conf:
+                        device_conf.send_config_set(config_commands)
+                        config_commands.pop()
+                except Exception as e:
+                    print(e)
+                    request.session['error'] = "deosn't connected of device "+host
+                    request.session.set_expiry(10)  
+        elif proto == 'rip':
+            config_commands = [
+                    "router rip ",
+                    "router "+ proto_backbone,
+                    "address-family ipv4 vrf  "+name,
+                    "redistribute rip ",
+                    "exit-address-family ",
+                    "router rip ",
+                    "version 2 ",
+                    "address-family ipv4 vrf  "+name,
+                    "redistribute "+proto_backbone+" metric  transparent ",
+            ]
+            for device in device_vrf:
+                host = device.name
+                network = request.POST["net"+host]
+                config_commands.append("network " +network)
+                try:
+                    with ConnectHandler(**device.params) as device_conf:
+                        device_conf.send_config_set(config_commands)
+                        config_commands.pop()
+                except Exception as e:
+                    print(e)
+                    request.session['error'] = "deosn't connected of device "+host
+                    request.session.set_expiry(10)
+                                     
+        elif proto == 'ospf':
+            as_number = request.POST["as_number"]
+            area = request.POST['area']
+            config_commands = [
+                    "router "+proto+" "+as_number+" vrf "+name,
+                    "router "+ proto_backbone,
+                    "address-family ipv4 vrf  "+name,
+                    "redistribute ospf "+as_number + " metric 1 ",
+                    "exit-address-family",
+                    "router "+proto+" "+as_number+" vrf "+name,
+                    #"network  " +network + " "+mask,
+                    "redistribute "+proto_backbone+" subnets ",
+            ]
+
+            for device in device_vrf:
+                host = device.name
+                network = request.POST["net"+host]
+                mask = request.POST["mask"+host]
+                config_commands.append("router-id " +network)
+                config_commands.append("network " +network + " "+mask+ " area " +area)
+                try:
+                    with ConnectHandler(**device.params) as device_conf:
+                        device_conf.send_config_set(config_commands)
+                        config_commands.pop()
+                        config_commands.pop()
+                except Exception as e:
+                    print(e)
+                    request.session['error'] = "deosn't connected of device "+host
+                    request.session.set_expiry(10)
+        request.session['error'] = "You are added a new customer : "+name
+        request.session.set_expiry(10)
+        return HttpResponse(config_commands)
+        return HttpResponseRedirect("/manager/vrf") 
     content ={
-        "protocols" : CHOICES_PROTOCOL,
-        "devices" : device_vrf,
         "title" : "routing for vrf",
         "path" : "management",
+        "vrf" : vrf,
+        "devices" : device_vrf,
     }
     return render(request,"manager/vrf/edit/vrfrouting.html",content)
 
