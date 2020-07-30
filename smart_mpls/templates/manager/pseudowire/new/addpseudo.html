@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1 class='title'>Add a new L2vpn eth to eth</h1>
+    {% if request.session.error %}
+    <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
+    {% endif %}    
+    <div class="card-body">
+        <form method="POST" action="{% url 'add_pseudo'%}">
+            {% csrf_token %}
+            {{ form }}
+            {% for device, interface_name in forward_interfaces.items %}
+            <label class="">{{ device }}: </label>
+            <div class="custom-control custom-checkbox">
+                <select class="custom-select" name="int{{ device }}">
+                    <option value="" >choice a interface </option>
+                    {% for interface in interface_name %}
+                    <option value="{{ interface }}" >{{ interface }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endfor %}
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary btn-block" >new pseudowire</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

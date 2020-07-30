@@ -20,6 +20,9 @@
         </li>
         <li>
             {{ vrf}}  <a href="{% url 'vrf' %}">vrf{% if vrf > 1%}s{% endif %}</a>
+        </li>
+        <li>
+            {{ pseudos }}  <a href="{% url 'pseudo' %}">pseudowire{% if pseudos > 1%}s{% endif %}</a>
         </li>    
     </ul>
 

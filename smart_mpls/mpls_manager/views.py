@@ -26,12 +26,15 @@ def index_manager(request)-> HttpResponse:
     access = Access.objects.all().count()
     topos = Topologies.objects.all().count()
     vrf = Vrf.objects.all().count()
+    pseudos = Pseudowire.objects.all().count()
     content = {
         "device" : device,
         "access" : access,
         "topo" : topos,
         "vrf" : vrf,
-        "title": "manager"
+        "pseudos" : pseudos,
+        "title": "manager",
+        "path": "manager",
     }
     return render(request, 'manager/index.html', content)
 
@@ -203,7 +206,6 @@ def add_device(request)-> HttpResponse:
    
 def vrf(request) -> HttpResponse:
     vrf = Vrf.objects.all()
-    #device_vrf= vrf[0].devices.all()
     number = vrf.count()
     
     content = {
@@ -459,5 +461,122 @@ def add_vrf_device(request,device_id) -> HttpResponse:
         return render(request, 'addVrfinDevice.html',content)
   
   
+def pseudo(request):
+    pseudos = Pseudowire.objects.all()
+    number = pseudos.count()
+    
+    content = {
+        "pseudos" : pseudos,
+        "number" : number,
+        "path":"manager",
+        "title": 'pseudowire eth-to-eth',
+    }    
+    return render(request,"manager/pseudowire/indexpseudo.html", content)
+  
 
+def add_pseudo(request) :
+    devices = Device.objects.all()
+    if request.method=='POST':
+        form = PseudowireForm(request.POST)
+        if form.is_valid():
+            name_pseudo= request.POST["name"]
+            encapsulation = request.POST["encapsulation"]
+            vcid = request.POST["vcid"]
+            lo1= '10.10.10.1'
+            lo2= '10.10.10.2'
+            lo3= '10.10.10.3'
+            lo4= '10.10.10.4'
+            interface_pseudos = {}
+            for device in devices :
+                name = device.name
+                inter =request.POST["int"+name]
+                if inter != "":
+                    interface_pseudos[name] = {"interface": inter,'loopback':lo1}    
+            config_commands = [
+                    "pseudowire-class "+name_pseudo,
+                    "encapsulation " +encapsulation,
+                ]
+            new_pseudo = Pseudowire(name = name, vcid = vcid ,encapsulation = encapsulation,)
+            new_pseudo.save()
+            for device in devices :
+                name = device.name
+                config = False
+                if name in interface_pseudos:
+                    config = True
+                    interface_remo = interface_pseudos[name]
+                    interface = interface_pseudos[name]["interface"]
+                    config_commands.append("interface " + interface)
+                    star= len(config_commands)
+                    interface_pseudos.pop(name)
+                    for interface_pseudo, inter_item in interface_pseudos.items():
+                        loop = inter_item['loopback']
+                        config_commands.append('xconnect '+loop+' ' +vcid+' encapsulation '
+                                               +encapsulation+' pw-class '+name_pseudo)
+                        config_commands.append('no shutdo')
+                    if config :
+                        try:
+                            with ConnectHandler(**device.params) as device_conf:
+                                device_conf.send_config_set(config_commands)
+                                device_run = Device.objects.get(name = device)
+                                new_pseudo.devices.add(device_run)
+                        except Exception as e:
+                            pass
+                    del config_commands[star-1:]
+                    interface_pseudos[name] =interface_remo       
+        return  HttpResponseRedirect('/manager/pseudowire')
+    form = PseudowireForm()
+    forward_interface = {}
+    interfaces = {}
+    hosts =""
+    
+    for device in devices:
+        driver = get_network_driver(device.napalm_driver)
+        host = device.host
+        username = device.username
+        password = device.password
+        try:
+            with driver(host, username, password, optional_args={}) as device_run:
+                interfaces = device_run.get_interfaces()
+        except Exception as e:
+            hosts = hosts + host +", "
+            request.session['error'] = "deosn't connected of device : "+hosts
+            request.session.set_expiry(10)
+        
+        forward_interface[device] = interfaces 
+    content={
+        'form' : form,
+        'forward_interfaces' : forward_interface,
+        "path":"manager",
+        "title": 'new eth-to-eth'
+    }    
+    return render(request, 'manager/pseudowire/new/addpseudo.html',content)  
+
+
+
+def int_pseudo(request, int_pseudo):
+    pseudo = Pseudowire.objects.get(id = vrf_id)
+    device_pseudo = vrf.devices.all()
+    if request.method =="POST":
+        for device in device_vrf:
+            interface_fors = request.POST["int"+device.name]
+            network = request.POST["net"+device.name]
+            mask = request.POST["mask"+device.name]
+            config_commands = [
+                    "interface "+interface_fors,
+                    "ip vrf forwarding "+vrf.name,
+                    "ip address " +network + " "+mask,
+                    "no shutdown ",
+                ]
+            with ConnectHandler(**device.params) as device_conf:
+                device_conf.send_config_set(config_commands)
+        return HttpResponse("hello")        
+        return HttpResponseRedirect("/manager/vrf/vrfrouting/"+str(vrf.id))    
+          
+    content={
+        "devices" : device_vrf,
+        "forward_interfaces" : forward_interface,
+        'title': "interface provider edge",
+        'path': "manager",
+    }
+    return render(request,"manager/vrf/edit/vrfforward.html",content)
 

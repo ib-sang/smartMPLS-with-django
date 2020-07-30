@@ -151,5 +151,12 @@ class Vrf(models.Model):
     def __str__(self):
         return self.name  
     
+class Pseudowire(models.Model):
+    name = models.CharField(max_length=100)
+    vcid = models.IntegerField(default=101)
+    encapsulation = models.CharField(max_length=30, choices={('mpls', 'MPLS encapsulation'),
+    ('l2tpv2 ', 'L2TPv2 encapsulation'), ('l2tpv3', 'L2TPv3 encapsulation')}, default="mpls", blank=True)
+    routers = models.ManyToManyField(Device, related_name='device_pseu', blank=True)
+
       
            

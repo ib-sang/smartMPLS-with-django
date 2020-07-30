@@ -21,6 +21,12 @@ CHOICES_PROTOCOL = [
     ('bgp', 'BGP'),
 ]
 
+CHOICES_ENCAPSULATION=[
+    ('mpls', 'MPLS encapsulation'),
+    ('l2tpv2', 'L2TPv2 encapsulation'),
+    ('l2tpv3', 'L2TPv3 encapsulation'),
+]
+
 class AddVRFForm(forms.Form):
     name = forms.CharField(label='name',widget=forms.TextInput(attrs={"class":"form-control","placeholder":"name for customer","name":"name","type":"text"}))
     rd = forms.CharField(label='rd', widget=forms.TextInput(attrs={"class":"form-control","placeholder":"asm:asm or a.b.c.d:asm","name":"rd","type":"text","value":""}))
@@ -73,7 +79,7 @@ class DeviceForm(forms.ModelForm):
             "host" :  forms.TextInput(attrs={'class':'form-control mb-4'}),
         }  
         widget = {
-            'device_type' : forms.ChoiceField(widget=forms.Select(attrs={"class":"form-control" } ), label='device_type', choices=CHOICES_TYPE, initial="router", required=True, ),
+            'device_type' : forms.ChoiceField(widget=forms.Select(attrs={"class":"custom-select" } ), label='device_type', choices=CHOICES_TYPE, initial="router", required=True, ),
             "protocol" : forms.ChoiceField(label='protocol backbone ', choices=CHOICES_PROTOCOL,  initial="bgp", required=True),            
             "plateform" : forms.ChoiceField(label='plateform', choices=CHOICES_PLATEFORM,  initial="cisco_ios", required=True),
             "management" : forms.ModelChoiceField(queryset=Access.objects.all()),
@@ -93,5 +99,19 @@ class VRFForm(forms.ModelForm):
                     "routeExport" :  forms.TextInput(attrs={'class':'form-control '}),
                 }
         widget = {
-            "devices" : forms.ModelMultipleChoiceField(queryset = Access.objects.all()),
+            "devices" : forms.ModelMultipleChoiceField(queryset = Device.objects.all()),
         } 
+
+class PseudowireForm(forms.ModelForm):
+    
+    class Meta:
+        model = Pseudowire
+        fields = ["name", "vcid", "encapsulation", ] 
+        widgets = {
+            "name" : forms.TextInput(attrs={'class':'form-control'}),
+            "vcid" : forms.TextInput(attrs={'class':'form-control'}),
+        }  
+        widget = {
+            "encapsulation" : forms.ChoiceField(label='Encapsulation', choices=CHOICES_ENCAPSULATION,  initial="mpls", required=True
+                                                ,widget=forms.Select(attrs={"class":"custom-select" } )),            
+        }

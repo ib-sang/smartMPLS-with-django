@@ -22,6 +22,9 @@ urlpatterns = [
     path('manager/vrf/forwarding/<int:vrf_id>', views.in_vrf, name='int_vrf'),
     path('manager/vrf/vrfrouting/<int:vrf_id>', views.routing_vrf, name='routing_vrf'),
     path('manager/vrf/delete/<int:vrf_id>', views.del_vrf, name='del_vrf'),
+    path('manager/pseudowire', views.pseudo, name='pseudo'),
+    path('manager/pseudowire/add', views.add_pseudo, name='add_pseudo'),
+    path('manager/pseudowire/interface/<int:pseudo_id>', views.int_pseudo, name='int_pseudo'),
 
     path('manager/device/vrf/<int:device_id>', views.add_vrf_device, name='add_vrf_device'),
 
