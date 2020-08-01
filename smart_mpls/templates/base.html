@@ -1,42 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>smart MPLS </title>
+    <link rel="stylesheet" href="/static/assets/styles/css/app.css">
+    <title>smart MPLS | {{ title }} </title>
 </head>
 
 <body>
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item {% if request.path == '/' %} active {% endif %} ">
-                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+    <div class="wrapper">
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="left-side-menu">
+            <!-- LOGO -->
+            <a href="{% url 'index' %}" class="logo">smartMPLS</a>
+            <!-- LOGO -->
+            <div class="left-side-navbar">
+                <ul class="side-nav">
+                    <li class="side-nav-title">PROJECTS</li>
+                    {% for p  in projects %}
+                    <li class="side-nav-item"><a href="{% url 'edit_topo' p.id %}" class="side-nav-link">{{ p.name }}</a></li>
+                    {% endfor %}
+                    <li class="side-nav-item"><a href="{% url 'add_topo' %}" class="side-nav-link side-new">+ new project</a></li>
+                </ul>
+                <ul class="side-nav">
+                    <li class="side-nav-title">MANAGE</li>
+                    <li class="side-nav-item"><a href="{% url 'index_manager' %}" class="side-nav-link">Networking</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Provisioning</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Monitoring</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">API</a></li>
+                </ul>
+                <ul class="side-nav">
+                    <li class="side-nav-title">AcCOUNT</li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Profil</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Your Projects</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Settings</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Help</a></li>
+                    <li class="side-nav-item"><a href="" class="side-nav-link">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+            <!-- Topbar Start -->
+            <div class="nav-customer">
+                <div class="nav-item nav-link-menubar">
+                    <a href="" class="nav-link ">
+                        <svg class="navbar-icon" >
+                            <use xlink:href="/static/icones/iconeAgence.svg#014-instagram" ></use>
+                        </svg>   
+                    </a>
+                </div>
+                <form action="" class="nav-form">
+                    <svg class="navbar-form-icon" >
+                        <use xlink:href="/static/icones/iconeAgence.svg#014-instagram" ></use>
+                    </svg>
+                    <input type="text" placeholder="Search here..." name="q" class="form-control nav-input">
+                    <button class="btn btn-nav">Search</button>
+                </form>
+                <ul class="nav-customer-list">
+                    <li class="nav-item">
+                        <a href="" class="nav-link nav-link-search">
+                            <svg class="navbar-icon" >
+                                <use xlink:href="/static/icones/iconeAgence.svg#014-instagram" ></use>
+                            </svg>   
+                        </a>
                     </li>
-                    <li class="nav-item {% if request.path == '/devices' %} active {% endif %} ">
-                        <a class="nav-link" href="{% url 'add_device' %}">Devices</a>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            <svg class="navbar-icon" >
+                                <use xlink:href="/static/icones/iconeAgence.svg#014-instagram" ></use>
+                            </svg>   
+                        </a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="{% url 'all_vrf' %}">Vrfs</a>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            <svg class="navbar-icon" >
+                                <use xlink:href="/static/icones/iconeAgence.svg#014-instagram" ></use>
+                            </svg>   
+                        </a>
                     </li>
-                    <li class="nav-item {% if request.path == '/topology/add' %} active {% endif %} ">
-                        <a class="nav-link " href="{% url 'monitor' %}" >Monitoring</a>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">
+                            <svg class="navbar-icon" >
+                                <use xlink:href="/static/icones/iconeAgence.svg#014-instagram" ></use>
+                            </svg>   
+                        </a>
                     </li>
-                    <li class="nav-item {% if request.path == '/manager' %} active {% endif %} ">
-                        <a class="nav-link " href="{% url 'index_manager' %}" >Management</a>
+                    <li class="nav-item side-nav-user">
+                            <img src="{% static 'images/devops-engineer-job-description_orig.jpg' %}" alt="" class="nav-user-img">
+                            <div class="nav-user-login">
+                                <span class="nav-user-name">Jeo Demo</span>
+                                <span class="nav-user-role">admin</span>
+                            </div>         
                     </li>
                 </ul>
             </div>
-        </nav>
-    </header>
+            <!-- Start Content-->
+            <main class="contenair-fluid">
+                {% block content %}{% endblock %}
+                <img src="{% static 'images/devops-engineer-job-description_orig.jpg' %}" alt="">
+            </main>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+    </div>
 
 
 
 
-    {% block content %}{% endblock %}
+
+    
+
+
+    <footer class="footer container">
+        <div class="footer-copy">Project pfe September 2020 © copyrithg</div>
+        <div class="footer-link">
+            <ul class="footer-list">
+                <li class="footer-item"><a href="" class="footer-link">About</a></li>
+                <li class="footer-item"><a href="" class="footer-link">Support</a></li>
+                <li class="footer-item"><a href="" class="footer-link">Contact us</a></li>
+            </ul>
+        </div>
+    </footer>
 
 </body>
 

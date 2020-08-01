@@ -1,0 +1,34 @@
+.footer{
+    border-top: 1px solid #b8eb66;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    background: #e0ecdf;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    @include dow(650) {
+        justify-content: center;
+        
+    }
+
+
+}
+
+.footer-list{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+.footer-item{
+    margin: 5px 10px;
+}
+
+.footer-link{
+    transition: text-decoration $during;
+}
+
+.footer-item a:hover{
+    text-decoration: underline;
+  }

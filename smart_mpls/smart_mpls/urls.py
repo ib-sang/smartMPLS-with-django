@@ -20,4 +20,4 @@ urlpatterns = [
     path('', include('mpls_monitor.urls')),
     path('', include('mpls_manager.urls')),
     path('admin/', admin.site.urls),
-]
+] 

@@ -1,4 +1,11 @@
 {% extends "base.html" %} {% block content %}
+    <div class="banner">
+        <h1 class="banner-title">Manager</h1>
+        <div class="banner-arbo">
+            <a href=""></a>
+            <a href=""></a>
+        </div>
+    </div>
 <div class="container mt-4">
     <h1>the manager</h1>
     {% if request.session.success %}
@@ -23,6 +30,9 @@
         </li>
         <li>
             {{ pseudos }}  <a href="{% url 'pseudo' %}">pseudowire{% if pseudos > 1%}s{% endif %}</a>
+        </li> 
+        <li>
+            {{ vpls }}  <a href="{% url 'vpls' %}">vpls{% if pseudos > 1%}s{% endif %}</a>
         </li>    
     </ul>
 

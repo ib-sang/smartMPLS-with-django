@@ -1,0 +1,14 @@
+.content-page{
+    width: calc(100% - 180px);
+    margin-left: 0px;
+    @include up(600) {
+        margin-left: 80px;
+    }
+    @include up(1000) {
+        margin-left: 180px;
+    }
+}
+.contenair-fluid{
+    width: 100%;
+    margin-top: 50px;
+}

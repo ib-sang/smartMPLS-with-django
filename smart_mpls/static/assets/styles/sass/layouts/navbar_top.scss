@@ -1,0 +1,132 @@
+
+.nav-customer{
+    background: #fff;
+    box-shadow: 5px 3px 10px 10px #030a031a;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between ;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0px;
+    right: 0; 
+    color: #707a70;  
+    @include up(650) {
+        left: 80px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    @include up(1000) {
+        left: 180px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    
+}
+.nav-link-menubar{
+    padding-left: 10px;
+    @include up(650) {
+        display: none;
+    }
+}
+.nav-form{
+    padding-left: 10px;
+    padding-right: 0;
+    padding-top: 0 ;
+    padding-bottom: 0;
+    background: #dff5df;
+    border-radius: 5px;
+    display: none;
+    @include up(650) {
+        display: inline-block;
+    }
+}
+.nav-link-search{
+    display: inline;
+    @include up(650) {
+        display: none;
+    }
+}
+
+.nav-input{
+    border: none;
+    background: #dff5df;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.btn-nav{
+    background:#61cf56;
+    border: none;
+    transition: opacity $during;
+    color: #f2fff1;
+    opacity: .8;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    
+}
+.btn-nav:hover{
+    opacity: 1;
+}
+
+.nav-customer-list{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    @include dow(650) {
+        justify-content: space-between;
+        
+    }
+}
+
+.nav-customer-list li + li{
+    margin-left: 10px;
+    
+    
+}
+.nav-customer-list li{
+    color: #707a70;
+    @include dow(250) {
+        margin: 10px 0;
+    }
+    
+}
+
+.nav-customer-list li a:hover{
+    color: #61cf56;
+}
+.side-nav-user{
+    background-color: #a4e9a4;
+    padding: 10px 10px;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    
+}
+
+.nav-user-img{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    @include dow(550) {
+        display: table;
+        margin-left: 10px;
+
+    }
+   
+}
+.nav-user-name,.nav-user-role{
+    display: block;
+    font-size: 12px;
+    @include dow(550) {
+        display: none;
+        margin: 0;
+    }
+}
+.nav-user-role{
+    font-size: 10px;
+}
+.nav-user-login{
+    margin-left: 10px;
+}

@@ -25,6 +25,10 @@ urlpatterns = [
     path('manager/pseudowire', views.pseudo, name='pseudo'),
     path('manager/pseudowire/add', views.add_pseudo, name='add_pseudo'),
     path('manager/pseudowire/interface/<int:pseudo_id>', views.int_pseudo, name='int_pseudo'),
+    
+    path('manager/vpls', views.vpls, name='vpls'),
+    path('manager/vpls/add', views.add_vpls, name='add_vpls'),
+    path('manager/vpls/interface/<int:vpls_id>', views.int_vpls, name='int_vpls'),
 
     path('manager/device/vrf/<int:device_id>', views.add_vrf_device, name='add_vrf_device'),
 

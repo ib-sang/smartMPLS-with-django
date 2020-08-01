@@ -1,15 +1,35 @@
 {% extends "base.html" %} {% block content %}
-<div class="container mt-4">
-    <h1>the manager</h1>
-    {% if request.session.success %}
+<div class="banner">
+        <h1 class="banner-title">Topology</h1>
+        <div class="banner-arbo">
+            <a href="{% url 'index_manager' %}" class="banner-link">Manager</a> > 
+            topology
+        </div>
+</div>
+{% if request.session.success %}
     <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
-    {% endif %}
-    {% if request.session.error %}
+{% endif %}
+{% if request.session.error %}
     <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
-    {% endif %}
-    <h1 class="title">We have  {{ number }} {% if number > 1 %} topologies {% else %} topology {% endif %}</h1>
+{% endif %}
+<h1 class="title">We have  {{ number }} {% if number > 1 %} topologies {% else %} topology {% endif %}</h1>
+<div class="md-2"><a href ="{% url 'add_topo' %}"> + new topology </a></div>
+<div class="main-gris">
+    <div class="carts">
+        <h1 class="cart-title">tote</h1>
+        <div class="cart-body">
+            One desvce 
+        </div>
+        <footer class="cart-footer">
+            One desvce 
+        </footer>
+    </div>
+</div>
 
-    <div class="md-2"><a href ="{% url 'add_topo' %}"> Add new topology </a></div>
+
+<div class="container mt-4">
+    
+
     <table class="table table-striped mt-4">
         <thead class="thead-dark text-center" >
             <tr>

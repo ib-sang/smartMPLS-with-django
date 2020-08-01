@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Algiers'
 
 USE_I18N = True
 
@@ -122,3 +122,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = [os.path.join(BASE_DIR, 'media'), ]
+MEDIA_URL = '/media/'
+
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
+NET_CONF_TEMPLATES = os.path.join(BASE_DIR, 'static/net_conf_templates')
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]

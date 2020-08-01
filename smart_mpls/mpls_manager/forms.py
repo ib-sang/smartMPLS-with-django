@@ -115,3 +115,18 @@ class PseudowireForm(forms.ModelForm):
             "encapsulation" : forms.ChoiceField(label='Encapsulation', choices=CHOICES_ENCAPSULATION,  initial="mpls", required=True
                                                 ,widget=forms.Select(attrs={"class":"custom-select" } )),            
         }
+
+
+
+class VplsForm(forms.ModelForm):
+    
+    class Meta:
+        model = Vpls
+        fields = ["description", "vcid", "router", ] 
+        widgets = {
+            "description" : forms.TextInput(attrs={'class':'form-control'}),
+            "vcid" : forms.TextInput(attrs={'class':'form-control'}),
+        }  
+        widget = {
+            "router" : forms.ModelMultipleChoiceField(queryset = Device.objects.all()),
+        }

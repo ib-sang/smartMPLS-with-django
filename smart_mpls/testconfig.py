@@ -14,24 +14,26 @@ from netmiko import ConnectHandler
 
 config_commands=[]
 params = {
-        'ip': '192.168.200.21',
+        'ip': '192.168.200.24',
         'username': 'admin',
         'password' : 'admin',
         'device_type' : 'cisco_ios'
     }
-command='show ip protocols | section bgp'
+command='show ip interface bri | section Loopback0'
 #net_connect = Netmiko(**params)
 #print(net_connect.find_prompt())
 tab=[]
 with ConnectHandler(**params) as device_conf:
     output = device_conf.send_command(command)
-    
-first, *others = output.splitlines()
-leng= len(first)
-protocol_backbone = first[21:leng -1]
+  
+output = output.split()
+print(output[1])    
+#first, *others = output.splitlines()
+#leng= len(first)
+#protocol_backbone = first[21:leng -1]
 #print(output)
-print(first)
-print(protocol_backbone)
+#print(first)
+#print(protocol_backbone)
 #print(others)
 #output = output.split()  
   

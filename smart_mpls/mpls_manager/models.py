@@ -38,6 +38,7 @@ class Access(models.Model):
 class Device(models.Model):
     name = models.CharField(max_length=100)
     host = models.CharField(max_length=70)
+    loopback = models.CharField(max_length=100)
     device_type = models.CharField(max_length=30, choices={('router' , 'Router'), ('switch', 'Switch'),
      ('firewall', 'Firewall') ,}, default="router", blank=True)
     plateform = models.CharField(max_length=30, choices={('cisco_ios', 'CISCO IOS'),
@@ -67,14 +68,13 @@ class Device(models.Model):
         return params
 
 
-    def config_device(self, **config_commands):
-        device = None
+    def config_device(self, config_commands):
         try:
-            with ConnectHandler(self.params) as device_conf:
-                device = device_conf.send_config_set(config_commands)
+            with ConnectHandler(**self.params) as device_conf:
+                device_conf.send_config_set(config_commands)
         except Exception as e:
-            print(e) 
-        return device
+            print(e)
+ 
 
 
     @property
@@ -112,6 +112,15 @@ class Device(models.Model):
         leng= len(first)
         protocol_backbone = first[21:leng -1]
         return protocol_backbone
+    
+    
+    @property
+    def show_loop(self):
+        command='show ip interface brief | section Loopback' 
+        with ConnectHandler(**self.params) as device_conf:
+            output = device_conf.send_command(command)
+        first = output.split()
+        return first[1]
 
 
     def vrf_ip_interface(self):
@@ -157,6 +166,11 @@ class Pseudowire(models.Model):
     encapsulation = models.CharField(max_length=30, choices={('mpls', 'MPLS encapsulation'),
     ('l2tpv2 ', 'L2TPv2 encapsulation'), ('l2tpv3', 'L2TPv3 encapsulation')}, default="mpls", blank=True)
     routers = models.ManyToManyField(Device, related_name='device_pseu', blank=True)
+
+class Vpls(models.Model):
+    description = models.CharField(max_length=100)
+    vcid = models.IntegerField(default=101)
+    router = models.ManyToManyField(Device, related_name='device_vpls', blank=True)
 
       
            

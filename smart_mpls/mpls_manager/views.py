@@ -24,17 +24,22 @@ def index(request)-> HttpResponse:
 def index_manager(request)-> HttpResponse:
     device = Device.objects.all().count()
     access = Access.objects.all().count()
-    topos = Topologies.objects.all().count()
+    topology = Topologies.objects.all()
+    topos = topology.count()
     vrf = Vrf.objects.all().count()
     pseudos = Pseudowire.objects.all().count()
+    vpls = Vpls.objects.all().count()
+    projects = topology.order_by("id").reverse()[:2]
     content = {
         "device" : device,
         "access" : access,
         "topo" : topos,
         "vrf" : vrf,
         "pseudos" : pseudos,
+        "vpls" : vpls,
         "title": "manager",
         "path": "manager",
+        'projects':projects
     }
     return render(request, 'manager/index.html', content)
 
@@ -42,15 +47,18 @@ def index_manager(request)-> HttpResponse:
 def accesses(request):
     access = Access.objects.all()
     number = access.count()
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     content = {
         "accesses" : access,
-        "number" : number
+        "number" : number,
+        'projects': projects
     }
     
     return render(request,"manager/access/indexaccess.html", content)
 
 
 def edit_access(request, access_id) -> HttpResponse:
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     access = Access.objects.get(id=access_id)
     if request.method== "POST":
         form = AccessForm(request.POST, instance=access)
@@ -67,7 +75,8 @@ def edit_access(request, access_id) -> HttpResponse:
     content = {
         "form" : form ,
         "access" : access, 
-        "title" : "access"
+        "title" : "access",
+        'projects' :projects,
         } 
     return render(request, "manager/access/edit/editaccess.html", content)
 
@@ -108,6 +117,7 @@ def topology(request)-> HttpResponse:
 
 
 def add_topo(request)-> HttpResponse:
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method=='POST':
         form = TopologyForm(request.POST)
         if form.is_valid():
@@ -118,12 +128,14 @@ def add_topo(request)-> HttpResponse:
     topo_form = TopologyForm()
     content={
         'topo_form' : topo_form,
-        "title":'topology'
+        "title":'topology',
+        'projects' : projects,
         }
     return render(request, "manager/topology/new/addtopology.html", content)
 
 
 def edit_topo(request, topo_id)-> HttpResponse:
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     topo = Topologies.objects.get(id=topo_id)
     if request.method== "POST":
         form = TopologyForm(request.POST, instance=topo)
@@ -137,7 +149,8 @@ def edit_topo(request, topo_id)-> HttpResponse:
     content = {
         "form" : form ,
         "topo" : topo, 
-        "title" : "access"
+        "title" : "access",
+        'projects' : projects,
         } 
     return render(request, "manager/topology/edit/edittopology.html", content)
 
@@ -153,10 +166,12 @@ def del_topo(request, topo_id)-> HttpResponse:
 def device(request):
     device = Device.objects.all()
     number = device.count()
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     content = {
         "devices" : device,
         "number" : number,
-        "title": "device"
+        "title": "device",
+        'projects' : projects,
     }
     
     return render(request,"manager/device/indexdevice.html", content)
@@ -164,6 +179,7 @@ def device(request):
 
 def edit_device(request, device_id) -> HttpResponse: 
     device = Device.objects.get(id=device_id)
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method== "POST":
         form = DeviceForm(request.POST, instance=device)
         if form.is_valid():
@@ -176,7 +192,8 @@ def edit_device(request, device_id) -> HttpResponse:
     content = {
         "form" : form ,
         "device" : device, 
-        "title" : "device"
+        "title" : "device",
+        "projects": projects,
         } 
     return render(request, "manager/device/edit/editdevice.html", content)
 
@@ -189,10 +206,15 @@ def del_device(request, device_id) -> HttpResponse:
     return  HttpResponseRedirect('/manager/device')
 
 def add_device(request)-> HttpResponse:
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method=='POST':
         new_device = DeviceForm(request.POST)
         if new_device.is_valid():
             new_device.save()
+            device = Device.objects.get(name = request.POST['name'])
+            loop = device.show_loop
+            device.loopback = loop   
+            device.save()         
             request.session['success'] = "You have added a new device in database"
             request.session.set_expiry(10) 
         return  HttpResponseRedirect('/manager/device') 
@@ -200,6 +222,7 @@ def add_device(request)-> HttpResponse:
     content={
         'device_form' : device_form,
         "title" : "device",
+        "projects": projects,
     }
     return render(request, 'manager/device/new/adddevice.html',content)
 
@@ -207,17 +230,19 @@ def add_device(request)-> HttpResponse:
 def vrf(request) -> HttpResponse:
     vrf = Vrf.objects.all()
     number = vrf.count()
-    
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     content = {
         "vrfs" : vrf,
         "number" : number,
         "path":"manager",
         "title": 'manager',
+        "projects": projects,
     }    
     return render(request,"manager/vrf/indexvrf.html", content)
 
 
 def add_vrf(request) :
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method=='POST':
         vrf_form = VRFForm(request.POST)
         if vrf_form.is_valid():
@@ -236,19 +261,16 @@ def add_vrf(request) :
             new_vrf.save()
             devices = vrf_form.cleaned_data['devices']
             for device in devices:
-                try:
-                    with ConnectHandler(**device.params) as device_conf:
-                        device_conf.send_config_set(config_commands)
-                        device_run = Device.objects.get(name = device)
-                        new_vrf.devices.add(device_run)
-                except Exception as e:
-                    pass
+                device.config_device(config_commands = config_commands)
+                device_run = Device.objects.get(name = device)
+                new_vrf.devices.add(device_run)
         return  HttpResponseRedirect('/manager/vrf/forwarding/'+str(new_vrf.id))
     vrf_form = VRFForm()
     content={
         'form' : vrf_form,
         "path":"manager",
-        "title": 'manager'
+        "title": 'manager',
+        "projects": projects,
     }    
     return render(request, 'manager/vrf/new/addvrf.html',content)  
 
@@ -271,6 +293,7 @@ def del_vrf(request, vrf_id):
 def in_vrf(request, vrf_id):
     vrf = Vrf.objects.get(id = vrf_id)
     device_vrf = vrf.devices.all()
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method =="POST":
         for device in device_vrf:
             interface_fors = request.POST["int"+device.name]
@@ -282,8 +305,7 @@ def in_vrf(request, vrf_id):
                     "ip address " +network + " "+mask,
                     "no shutdown ",
                 ]
-            with ConnectHandler(**device.params) as device_conf:
-                device_conf.send_config_set(config_commands)
+            device.config_device(config_commands = config_commands)
         return HttpResponseRedirect("/manager/vrf/vrfrouting/"+str(vrf.id))    
     forward_interface = {}
     interfaces = {}
@@ -307,11 +329,13 @@ def in_vrf(request, vrf_id):
         "devices" : device_vrf,
         "forward_interfaces" : forward_interface,
         'title': "interface provider edge",
+        "projects": projects,
     }
     return render(request,"manager/vrf/edit/vrfforward.html",content)
    
 
 def routing_vrf(request, vrf_id):
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     vrf = Vrf.objects.get(id = vrf_id)
     device_vrf = vrf.devices.all()
     if request.method == "POST":
@@ -338,14 +362,8 @@ def routing_vrf(request, vrf_id):
                 network = request.POST["net"+host]
                 mask = request.POST["mask"+host]
                 config_commands.append("network " +network + " "+mask)
-                try:
-                    with ConnectHandler(**device.params) as device_conf:
-                        device_conf.send_config_set(config_commands)
-                        config_commands.pop()
-                except Exception as e:
-                    print(e)
-                    request.session['error'] = "deosn't connected of device "+host
-                    request.session.set_expiry(10)  
+                device.config_device(config_commands)
+                config_commands.pop() 
         elif proto == 'rip':
             config_commands = [
                     "router rip ",
@@ -362,15 +380,8 @@ def routing_vrf(request, vrf_id):
                 host = device.name
                 network = request.POST["net"+host]
                 config_commands.append("network " +network)
-                try:
-                    with ConnectHandler(**device.params) as device_conf:
-                        device_conf.send_config_set(config_commands)
-                        config_commands.pop()
-                except Exception as e:
-                    print(e)
-                    request.session['error'] = "deosn't connected of device "+host
-                    request.session.set_expiry(10)
-                                     
+                device.config_device(config_commands)
+                config_commands.pop()
         elif proto == 'ospf':
             as_number = request.POST["as_number"]
             area = request.POST['area']
@@ -391,24 +402,18 @@ def routing_vrf(request, vrf_id):
                 mask = request.POST["mask"+host]
                 config_commands.append("router-id " +network)
                 config_commands.append("network " +network + " "+mask+ " area " +area)
-                try:
-                    with ConnectHandler(**device.params) as device_conf:
-                        device_conf.send_config_set(config_commands)
-                        config_commands.pop()
-                        config_commands.pop()
-                except Exception as e:
-                    print(e)
-                    request.session['error'] = "deosn't connected of device "+host
-                    request.session.set_expiry(10)
-        request.session['error'] = "You are added a new customer : "+name
+                device.config_device(config_commands)
+                config_commands.pop()
+                config_commands.pop()
+        request.session['success'] = "You are added a new customer : "+name
         request.session.set_expiry(10)
-        return HttpResponse(config_commands)
         return HttpResponseRedirect("/manager/vrf") 
     content ={
         "title" : "routing for vrf",
         "path" : "management",
         "vrf" : vrf,
         "devices" : device_vrf,
+        "projects" : projects,
     }
     return render(request,"manager/vrf/edit/vrfrouting.html",content)
 
@@ -464,34 +469,32 @@ def add_vrf_device(request,device_id) -> HttpResponse:
 def pseudo(request):
     pseudos = Pseudowire.objects.all()
     number = pseudos.count()
-    
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     content = {
         "pseudos" : pseudos,
         "number" : number,
         "path":"manager",
         "title": 'pseudowire eth-to-eth',
+        "projects" : projects,
     }    
     return render(request,"manager/pseudowire/indexpseudo.html", content)
   
 
 def add_pseudo(request) :
     devices = Device.objects.all()
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method=='POST':
         form = PseudowireForm(request.POST)
         if form.is_valid():
             name_pseudo= request.POST["name"]
             encapsulation = request.POST["encapsulation"]
             vcid = request.POST["vcid"]
-            lo1= '10.10.10.1'
-            lo2= '10.10.10.2'
-            lo3= '10.10.10.3'
-            lo4= '10.10.10.4'
             interface_pseudos = {}
             for device in devices :
                 name = device.name
                 inter =request.POST["int"+name]
                 if inter != "":
-                    interface_pseudos[name] = {"interface": inter,'loopback':lo1}    
+                    interface_pseudos[name] = {"interface": inter,'loopback':device.loopback}    
             config_commands = [
                     "pseudowire-class "+name_pseudo,
                     "encapsulation " +encapsulation,
@@ -514,13 +517,7 @@ def add_pseudo(request) :
                                                +encapsulation+' pw-class '+name_pseudo)
                         config_commands.append('no shutdo')
                     if config :
-                        try:
-                            with ConnectHandler(**device.params) as device_conf:
-                                device_conf.send_config_set(config_commands)
-                                device_run = Device.objects.get(name = device)
-                                new_pseudo.devices.add(device_run)
-                        except Exception as e:
-                            pass
+                        device.config_device(config_commands=config_commands)
                     del config_commands[star-1:]
                     interface_pseudos[name] =interface_remo       
         return  HttpResponseRedirect('/manager/pseudowire')
@@ -547,7 +544,8 @@ def add_pseudo(request) :
         'form' : form,
         'forward_interfaces' : forward_interface,
         "path":"manager",
-        "title": 'new eth-to-eth'
+        "title": 'new eth-to-eth',
+        "projects" : projects,
     }    
     return render(request, 'manager/pseudowire/new/addpseudo.html',content)  
 
@@ -556,6 +554,7 @@ def add_pseudo(request) :
 def int_pseudo(request, int_pseudo):
     pseudo = Pseudowire.objects.get(id = vrf_id)
     device_pseudo = vrf.devices.all()
+    projects = Topologies.objects.order_by("id").reverse()[:2]
     if request.method =="POST":
         for device in device_vrf:
             interface_fors = request.POST["int"+device.name]
@@ -567,16 +566,84 @@ def int_pseudo(request, int_pseudo):
                     "ip address " +network + " "+mask,
                     "no shutdown ",
                 ]
-            with ConnectHandler(**device.params) as device_conf:
-                device_conf.send_config_set(config_commands)
-        return HttpResponse("hello")        
-        return HttpResponseRedirect("/manager/vrf/vrfrouting/"+str(vrf.id))    
-          
+            device.config_device(config_commands=config_commands)
+        return HttpResponseRedirect("/manager/vrf/vrfrouting/"+str(vrf.id))        
     content={
         "devices" : device_vrf,
         "forward_interfaces" : forward_interface,
         'title': "interface provider edge",
         'path': "manager",
+        "projects" : projects
     }
     return render(request,"manager/vrf/edit/vrfforward.html",content)
 
+
+
+def vpls(request):
+    pseudos = Vpls.objects.all()
+    number = pseudos.count()
+    
+    content = {
+        "vpls" : pseudos,
+        "number" : number,
+        "path":"manager",
+        "title": 'pseudowire eth-to-eth',
+    }    
+    return render(request,"manager/vpls/indexvpls.html", content)
+
+
+def add_vpls(request):
+    devices = Device.objects.all()
+    if request.method=='POST':
+        form = VplsForm(request.POST)
+        description = request.POST["description"]
+        vcid = request.POST["vcid"]
+        for device in devices:
+            inter = request.POST["int"+device.name]
+            if vcid != "":
+                config_commands=[
+                    "interface "+inter,
+                ]
+                return HttpResponse("ok")
+        
+    forward_interface = {}
+    interfaces = {}
+    hosts =""
+    for device in devices:
+        driver = get_network_driver(device.napalm_driver)
+        host = device.host
+        username = device.username
+        password = device.password
+        try:
+            with driver(host, username, password, optional_args={}) as device_run:
+                interfaces = device_run.get_interfaces()
+        except Exception as e:
+            hosts = hosts + host +", "
+            print(e)
+            request.session['error'] = "deosn't connected of device : "+hosts
+            request.session.set_expiry(10)
+        
+        forward_interface[device] = interfaces
+    form = VplsForm()       
+    content={
+        "form" : form,
+        "devices" : devices,
+        "forward_interfaces" : forward_interface,
+        'title': "interface provider edge",
+    }
+    return render(request,"manager/vpls/new/addvpls.html",content)
+
+
+def int_vpls(request,vpls_id):
+    return HttpResponse("hello")
+
+
+
+def config_device(params, **config_commands):
+    device = None
+    try:
+        with ConnectHandler(params) as device_conf:
+            device = device_conf.send_config_set(config_commands)
+    except Exception as e:
+        print(e) 
+    return device
