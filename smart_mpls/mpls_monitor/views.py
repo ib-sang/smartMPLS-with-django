@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.http import HttpResponse,HttpRequest, JsonResponse
 from netmiko import ConnectHandler
-from napalm import get_network_driver
+#from napalm import get_network_driver
 from netmiko import Netmiko
 from mpls_manager.models import *
 

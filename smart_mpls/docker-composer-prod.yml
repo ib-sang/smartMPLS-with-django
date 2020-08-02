@@ -1,0 +1,12 @@
+version: "3.0"
+
+services:
+  django:
+    environment:
+      - DJANGO_SETTINGS_MODULE=smart_mpls.settings.production
+      #- SECRET_KEY
+    volumes:
+      - static:/static
+
+volumes:
+  static:

@@ -6,8 +6,6 @@
             <a href=""></a>
         </div>
     </div>
-<div class="container mt-4">
-    <h1>the manager</h1>
     {% if request.session.success %}
     <div class="mb-4 mt-4 font-weight-light p-2  text-success text-small ">{{ request.session.success }}</div>
     {% endif %}
@@ -15,28 +13,44 @@
     <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
     {% endif %}
 
-    <ul>
-        <li>
-            {{ device}}  <a href="{% url 'device' %}">device{% if device > 1%}s {% endif %}</a>
-        </li>
-        <li>
-            {{ access}}  <a href="{% url 'accesses' %}">{% if access > 1 %} accesses {% else %} access {% endif %}</a>
-        </li>
-        <li>
-            {{ topo}}  <a href="{% url 'topo' %}">{% if topo > 1%}topologies {%else%} topology {% endif %}</a>
-        </li>
-        <li>
-            {{ vrf}}  <a href="{% url 'vrf' %}">vrf{% if vrf > 1%}s{% endif %}</a>
-        </li>
-        <li>
-            {{ pseudos }}  <a href="{% url 'pseudo' %}">pseudowire{% if pseudos > 1%}s{% endif %}</a>
-        </li> 
-        <li>
-            {{ vpls }}  <a href="{% url 'vpls' %}">vpls{% if pseudos > 1%}s{% endif %}</a>
-        </li>    
-    </ul>
+    <div class="main-gris">
+        <div class="carts">
+            <a href="{% url 'device' %}" class="cart-body-link">
+                <div class="cart-number">{{ device}}</div>
+                <h1 class="cart-name">device{% if device > 1%}s {% endif %}</h1>
+            </a>  
+        </div>
+        <div class="carts">
+            <a href="{% url 'topo' %}" class="cart-body-link">
+                <div class="cart-number">{{ topo}}</div>
+                <h1 class="cart-name">{% if topo > 1%}topologies {%else%} topology {% endif %}</h1>
+            </a>  
+        </div>
+        <div class="carts">
+            <a href="{% url 'vrf' %}" class="cart-body-link">
+                <div class="cart-number">{{ vrf}}</div>
+                <h1 class="cart-name">vrf{% if VRF > 1%}s{% endif %}</h1>
+            </a>  
+        </div>
+        <div class="carts">
+            <a href="{% url 'pseudo' %}" class="cart-body-link">
+                <div class="cart-number">{{ pseudos }}</div>
+                <h1 class="cart-name">pseudowire{% if pseudos > 1%}s{% endif %}</h1>
+            </a> 
+        </div>
+        <div class="carts">
+            <a href="{% url 'vpls' %}" class="cart-body-link">
+                <div class="cart-number">{{ vpls }}</div>
+                <h1 class="cart-name">VPLS{% if pseudos > 1%}s{% endif %}</h1>
+            </a> 
+        </div>
+        <div class="carts">
+            <a href="{% url 'accesses' %}" class="cart-body-link">
+                <div class="cart-number">{{ access}}</div>
+                <h1 class="cart-name">{% if access > 1 %} accesses {% else %} access {% endif %}</h1>
+            </a>
+        </div>
+    </div>
 
-    
 
-</div>
 {% endblock %}

@@ -40,7 +40,7 @@ a {
     text-decoration: none;
     color: #66c25d;
     opacity: .6;
-    transition: color $during;
+    transition: opacity $during;
 }
 a:hover{
     opacity: 1;
@@ -54,14 +54,14 @@ a:hover{
     margin-top: 0px;
     min-width: 200px;
     @include up(650) {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
         margin-left: 80px;
     }
     @include up(1000) {
         margin-left: 180px;
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
 
@@ -87,6 +87,6 @@ a:hover{
 @import 'layouts/content_page.scss';
 @import 'layouts/navbar_top.scss';
 @import 'layouts/form.scss';
-@import 'layouts/header.scss';
+@import 'layouts/cart.scss';
 @import 'layouts/footer.scss';
 @import 'layouts/banner.scss';

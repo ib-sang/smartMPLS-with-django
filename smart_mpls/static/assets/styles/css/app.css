@@ -226,7 +226,7 @@ a {
   text-decoration: none;
   color: #66c25d;
   opacity: 0.6;
-  transition: color 0.5s;
+  transition: opacity 0.5s;
 }
 
 a:hover {
@@ -241,16 +241,16 @@ a:hover {
 }
 @media (min-width: 651px) {
   .container {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
     margin-left: 80px;
   }
 }
 @media (min-width: 1001px) {
   .container {
     margin-left: 180px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 
@@ -512,6 +512,70 @@ a:hover {
 .btn {
   padding: 10px 8px;
   cursor: pointer;
+}
+
+.main-gris {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(6, 1fr);
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+@media (min-width: 651px) {
+  .main-gris {
+    padding-left: 12px;
+    padding-right: 12px;
+    grid-gap: 12px;
+    margin-bottom: 12px;
+    margin-top: 12px;
+  }
+}
+@media (min-width: 1001px) {
+  .main-gris {
+    padding-left: 20px;
+    padding-right: 20px;
+    grid-gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+.carts {
+  padding: 20px;
+  border: 1px solid #a1b1a0;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 1px 1px 1px 8px #030a031a;
+}
+
+.cart-body-link {
+  width: 100%;
+  height: 100%;
+}
+
+.cart-number, .cart-name {
+  text-align: center;
+}
+
+.cart-number {
+  color: #2a6dd1;
+  font-size: 28px;
+}
+
+.cart-name {
+  font-size: 14px;
+}
+
+.cart-name::first-letter {
+  text-transform: uppercase;
+}
+
+.new-enter {
+  background: #d12a2a;
+  border-radius: 20px;
+  padding: 10px;
 }
 
 .footer {

@@ -13,17 +13,16 @@
     <div class="mb-4 mt-4 font-weight-light p-2  text-danger text-small ">{{ request.session.error }}</div>
 {% endif %}
 <h1 class="title">We have  {{ number }} {% if number > 1 %} topologies {% else %} topology {% endif %}</h1>
-<div class="md-2"><a href ="{% url 'add_topo' %}"> + new topology </a></div>
+<div class="new-enter"><a href ="{% url 'add_topo' %}"> + new topology </a></div>
 <div class="main-gris">
+    {% for topo in topology %}
     <div class="carts">
-        <h1 class="cart-title">tote</h1>
+        <h1 class="cart-title">{{ topo.name}}</h1>
         <div class="cart-body">
-            One desvce 
+            {{ topo.description}}
         </div>
-        <footer class="cart-footer">
-            One desvce 
-        </footer>
     </div>
+    {% endfor %}
 </div>
 
 

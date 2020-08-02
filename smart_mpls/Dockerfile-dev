@@ -1,0 +1,27 @@
+FROM python:3.7-alpine
+LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
+
+WORKDIR /app
+
+COPY pyproject.toml .
+COPY poetry.lock .
+
+RUN apk add --no-cache \
+        build-base \
+        libffi-dev \
+        openssl-dev \
+        gcc \
+        libxslt-dev \
+        libxslt \
+        libxml2 \
+        libxml2-dev \
+    && pip install --no-cache-dir poetry \
+    && poetry config virtualenvs.in-project true
+
+
+EXPOSE 3000
+
+
+WORKDIR smart_mpls
+
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]

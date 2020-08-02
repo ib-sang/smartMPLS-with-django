@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.http import HttpResponse,HttpRequest, JsonResponse, HttpResponseRedirect
 from netmiko import ConnectHandler
-from napalm import get_network_driver
+#from napalm import get_network_driver
 from netmiko import Netmiko
 from .models import *
 from .forms import *
@@ -17,7 +17,10 @@ CHOICES_PROTOCOL = [
 
 
 def index(request)-> HttpResponse:
-    content = {}
+    projects = Topologies.objects.order_by("id").reverse()[:2]
+    content = {
+        'projects':projects
+    }
     return render(request, "index.html", content)
 
 
