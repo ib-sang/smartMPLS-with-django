@@ -48,7 +48,7 @@ RUN apt-get update \
 
 # Copy only requirements, to cache them in docker layer
 WORKDIR /code
-COPY . ./poetry.lock /code/
+COPY ./poetry.lock /code/
 
 
 
