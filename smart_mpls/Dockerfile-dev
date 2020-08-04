@@ -45,13 +45,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . pyproject.toml
 COPY . poetry.lock
 
-WORKDIR smart_mpls
 
-RUN poetry run pip install -U pip \
-    && poetry install --no-dev --no-interaction
+RUN poetry run pip install -U pip
 
 EXPOSE 3000
-
 
 WORKDIR smart_mpls
 
