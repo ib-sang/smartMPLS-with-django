@@ -8,8 +8,7 @@ RUN apt-get update \
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
     
 
-COPY pyproject.toml .
-COPY /poetry.lock .
+COPY smart_mpls/pyproject.toml .
 
 RUN python -m venv .venv \
     && poetry install --no-dev --no-interaction
