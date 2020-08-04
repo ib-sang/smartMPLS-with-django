@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8-slim-buster AS development_build
 LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
 ARG DJANGO_ENV
 
@@ -20,44 +20,53 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
-COPY requirements.txt .
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-setuptools \
-        python3-pip \
-        python3-dev \
-        python3-venv \
-        git \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*\
-    build-base \
-        libffi-dev \
-        openssl-dev \
-        gcc \
-        libxslt-dev \
-        libxslt \
-        libxml2 \
-        libxml2-dev \
-    && pip install --no-cache -r requirements.txt \
-    && find /usr/local \
-        \( -type d -a -name test -o -name tests \) \
-        -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
-        -exec rm -rf '{}' + \
-    && runDeps="$( \
-        scanelf --needed --nobanner --recursive /usr/local /yang-explorer \
-                | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-                | sort -u \
-                | xargs -r apk info --installed \
-                | sort -u \
-    )" \
-    && apk add --no-cache --virtual .rundeps $runDeps \
-    && apk del .build-deps \
-    && rm -rf /root/.cache
-
-COPY smart_mpls /smart_mpls
+RUN apt-get update \
+  && apt-get install --no-install-recommends -y \
+    bash \
+    build-essential \
+    curl \
+    gettext \
+    git \
+    libpq-dev \
+    wget \
+  # Cleaning cache:
+  && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  # Installing `dockerize` utility:
+  # https://github.com/jwilder/dockerize
+  && wget "https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+  && tar -C /usr/local/bin -xzvf "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+  && rm "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" && dockerize --version \
+  # Installing `tini` utility:
+  # https://github.com/krallin/tini
+  && wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini" \
+  && chmod +x /usr/local/bin/tini && tini --version \
+  # Installing `poetry` package manager:
+  # https://github.com/python-poetry/poetry
+  && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
+# Copy only requirements, to cache them in docker layer
 WORKDIR /smart_mpls
+COPY ./poetry.lock ./pyproject.toml /smart_mpls/
 
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
+
+# Project initialization:
+RUN echo "$DJANGO_ENV" \
+  && poetry install \
+    $(if [ "$DJANGO_ENV" = 'production' ]; then echo '--no-dev'; fi) \
+    --no-interaction --no-ansi \
+  # Cleaning poetry installation's cache for production:
+  && if [ "$DJANGO_ENV" = 'production' ]; then rm -rf "$POETRY_CACHE_DIR"; fi
+
+COPY ./docker/django/entrypoint.sh /docker-entrypoint.sh
+
+# Setting up proper permissions:
+RUN chmod +x '/docker-entrypoint.sh' \
+  && groupadd -r web && useradd -d /code -r -g web web \
+  && chown web:web -R /code \
+  && mkdir -p /var/www/django/static /var/www/django/media \
+  && chown web:web /var/www/django/static /var/www/django/media
+
+# Running as non-root user:
+USER web
