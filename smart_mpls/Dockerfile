@@ -55,7 +55,7 @@ RUN mkdir /code
 COPY ./app/pyproject.toml ./app/poetry.lock* /code
 
 # Project initialization:
-RUN poetry install 
+RUN poetry install --no-root --no-dev
 
 COPY ./smart_mpls/entrypoint.sh /docker-entrypoint.sh
 
