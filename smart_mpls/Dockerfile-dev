@@ -25,16 +25,14 @@ WORKDIR /app
 
 # System deps:
 RUN apk update \
-  && apk add --no-install-recommends \
+  && apk add --no-cache \
     bash \
     build-essential \
     curl \
     gettext \
     git \
     libpq-dev \
-    wget \
-  # Cleaning cache:
-  && apk autoremove  && apt-get clean  && rm -rf /var/lib/apt/lists/* \
+    wget 
 
 
 
