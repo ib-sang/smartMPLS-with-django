@@ -1,10 +1,59 @@
-FROM python:3.7-alpine
+FROM python:3.8
 LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
-ENV PYTHONUNBUFFERED 1
-RUN mkdir /code
-WORKDIR /code
-COPY requirements.txt /code/
-RUN pip install -r requirements.txt
-COPY . /code/
+ARG DJANGO_ENV
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:3000"]
+ENV DJANGO_ENV=${DJANGO_ENV} \
+  # python:
+  PYTHONFAULTHANDLER=1 \
+  PYTHONUNBUFFERED=1 \
+  PYTHONHASHSEED=random \
+  # pip:
+  PIP_NO_CACHE_DIR=off \
+  PIP_DISABLE_PIP_VERSION_CHECK=on \
+  PIP_DEFAULT_TIMEOUT=100 \
+  # dockerize:
+  DOCKERIZE_VERSION=v0.6.1 \
+  # tini:
+  TINI_VERSION=v0.19.0 \
+  # poetry:
+  POETRY_VERSION=1.0.10 \
+  POETRY_VIRTUALENVS_CREATE=false \
+  POETRY_CACHE_DIR='/var/cache/pypoetry'
+
+COPY requirements.txt .
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*\
+    build-base \
+        libffi-dev \
+        openssl-dev \
+        gcc \
+        libxslt-dev \
+        libxslt \
+        libxml2 \
+        libxml2-dev \
+    && pip install --no-cache -r requirements.txt \
+    && find /usr/local \
+        \( -type d -a -name test -o -name tests \) \
+        -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
+        -exec rm -rf '{}' + \
+    && runDeps="$( \
+        scanelf --needed --nobanner --recursive /usr/local /yang-explorer \
+                | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+                | sort -u \
+                | xargs -r apk info --installed \
+                | sort -u \
+    )" \
+    && apk add --no-cache --virtual .rundeps $runDeps \
+    && apk del .build-deps \
+    && rm -rf /root/.cache
+
+COPY smart_mpls /smart_mpls
+
+COPY . pyproject.toml
+COPY . poetry.lock
+
+WORKDIR /smart_mpls
+
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
