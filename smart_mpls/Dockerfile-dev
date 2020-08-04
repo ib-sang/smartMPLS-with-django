@@ -21,28 +21,28 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
 
+# create and set working directory
+RUN mkdir /app
 WORKDIR /app
 
-# System deps:
-RUN  apk add --no-cache \
-    bash \
-    build-essential \
-    curl \
-    gettext \
-    git \
-    libpq-dev \
-    wget \
-    gcc \
-    libxslt-dev \
-    libxslt \
-    libxml2 \
-    libxml2-dev \
-    && pip install --no-cache-dir poetry \
-    && poetry config virtualenvs.in-project true
 
+# set default environment variables
+ENV PYTHONUNBUFFERED 1
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive 
 
-
-
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        tzdata \
+        python3-setuptools \
+        python3-pip \
+        python3-dev \
+        python3-venv \
+        git \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
 EXPOSE 3000
 
 
