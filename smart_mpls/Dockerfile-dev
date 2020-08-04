@@ -19,9 +19,6 @@ RUN apk add --no-cache \
 COPY . pyproject.toml
 COPY . poetry.lock
 
-WORKDIR /app
-
-RUN poetry install --no-dev --no-interaction
 
 EXPOSE 3000
 
