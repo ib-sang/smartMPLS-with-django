@@ -57,4 +57,4 @@ EXPOSE 3000
 
 WORKDIR /app/smart_mpls
 
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
+#CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
