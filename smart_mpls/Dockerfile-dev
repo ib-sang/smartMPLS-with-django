@@ -20,6 +20,7 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
+WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-setuptools \
         python3-pip \
@@ -40,6 +41,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && pip install --no-cache-dir poetry \
     && poetry config virtualenvs.in-project true
 
+
+COPY pyproject.toml .
+COPY poetry.lock .
 
 EXPOSE 3000
 
