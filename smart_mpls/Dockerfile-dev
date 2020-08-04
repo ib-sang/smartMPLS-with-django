@@ -19,8 +19,8 @@ RUN apk add --no-cache gcc libffi-dev musl-dev postgresql-dev
 RUN pip install "poetry==$POETRY_VERSION"
 RUN python -m venv /venv
 
-EXPOSE 3000
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
 
-WORKDIR /app/smart_mpls
-
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
+COPY . .
+RUN poetry build && /venv/bin/pip install dist/*.whl
