@@ -11,7 +11,6 @@ ENV YOUR_ENV=${YOUR_ENV} \
 
 WORKDIR /app
 
-RUN apt-get clean && apt-get update
 
 # System deps:
 RUN pip install "poetry==$POETRY_VERSION"
