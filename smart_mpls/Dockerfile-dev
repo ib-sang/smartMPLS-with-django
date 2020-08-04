@@ -9,10 +9,7 @@ RUN apt-get update \
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
     
 
-
-
-RUN python3 -m venv .venv \
-    && poetry install --no-dev --no-interaction
+COPY . /go/src/project/
 
 
 EXPOSE 3000
