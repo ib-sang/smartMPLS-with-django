@@ -46,11 +46,6 @@ RUN apt-get update \
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
-# Copy using poetry.lock* in case it doesn't exist yet
-COPY . pyproject.toml 
-COPY . poetry.lock
-
-# Project initialization:
 
 
 EXPOSE 3000
