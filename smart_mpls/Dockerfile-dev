@@ -42,8 +42,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && poetry config virtualenvs.in-project true
 
 
-COPY pyproject.toml .
-COPY poetry.lock .
+WORKDIR /code
+COPY ./poetry.lock ./pyproject.toml /code/
 
 EXPOSE 3000
 
