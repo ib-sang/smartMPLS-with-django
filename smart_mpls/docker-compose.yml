@@ -10,7 +10,7 @@ services:
     command: python manage.py runserver 0.0.0.0:3000
     volumes:
       - ./log:/log
-      - ./smart_mpls:./app/smart_mpls
+      - ./smart_mpls:/app/smart_mpls
     ports:
       - "3000:3000"
   #====================================#
