@@ -50,7 +50,7 @@ RUN apt-get update \
 RUN mkdir /code
 
 WORKDIR /code
-COPY . /code/
+COPY . /code/pyproject.toml
 
 
 
