@@ -54,14 +54,8 @@ COPY . /code/pyproject.toml
 
 
 
-
 # Project initialization:
-RUN echo "$DJANGO_ENV" \
-  && poetry install \
-    $(if [ "$DJANGO_ENV" = 'production' ]; then echo '--no-dev'; fi) \
-    --no-interaction --no-ansi \
-  # Cleaning poetry installation's cache for production:
-  && if [ "$DJANGO_ENV" = 'production' ]; then rm -rf "$POETRY_CACHE_DIR"; fi
+RUN poetry install 
 
 COPY ./smart_mpls/entrypoint.sh /docker-entrypoint.sh
 
