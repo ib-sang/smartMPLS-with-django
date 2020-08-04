@@ -2,9 +2,7 @@ version: "3.3"
 
 services:
   django:
-    build: 
-      context: .
-    
+    build: .
     volumes:
       - .:/code
     ports:
