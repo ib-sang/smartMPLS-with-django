@@ -43,8 +43,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && poetry config virtualenvs.in-project true\
 
 
-COPY . smart_mpls/pyproject.toml
-COPY . smart_mpls/poetry.lock
+COPY . pyproject.toml
+COPY . poetry.lock
 
 
 
