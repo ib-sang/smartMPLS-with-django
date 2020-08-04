@@ -54,7 +54,6 @@ COPY . pyproject.toml
 COPY . poetry.lock
 
 # Project initialization:
-RUN poetry install --no-root --no-dev
 
 COPY ./smart_mpls/entrypoint.sh /docker-entrypoint.sh
 
