@@ -4,8 +4,6 @@ services:
   django:
     image: smart_mpls:dev
     build: ./
-    restart: always
-    network_mode: host
     command: python manage.py runserver 0.0.0.0:3000
   #====================================#
   #services:
