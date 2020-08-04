@@ -6,8 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: django
-    environment:
-      - PYTHONUNBUFFERED=1
     volumes:
       - ./log:/log
 
