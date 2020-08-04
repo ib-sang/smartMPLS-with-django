@@ -43,6 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && poetry config virtualenvs.in-project true
 
 COPY . /tmp/smart_mpls
+COPY . pyproject.toml
 
 EXPOSE 3000
 
