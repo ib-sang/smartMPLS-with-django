@@ -42,9 +42,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && pip install --no-cache-dir poetry \
     && poetry config virtualenvs.in-project true
 
-COPY . /tmp/smart_mpls
 COPY . pyproject.toml
+COPY . poetry.lock
 
+RUN poetry run pip install -U pip \
+    && poetry install --no-dev --no-interaction
+    
 EXPOSE 3000
 
 
