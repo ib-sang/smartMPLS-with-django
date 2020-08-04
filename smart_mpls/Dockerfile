@@ -46,11 +46,12 @@ RUN apt-get update \
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
+
 WORKDIR /code
 
 # Copy using poetry.lock* in case it doesn't exist yet
-COPY ./app /app
-RUN poetry install --no-dev
+COPY . /pyproject.toml 
+COPY . /poetry.lock
 
 # Project initialization:
 RUN poetry install --no-root --no-dev
