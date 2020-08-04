@@ -11,9 +11,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./log:/log
-    command: python3 manage.py runserver 0.0.0.0:3000
-    ports:
-      - "3000:3000"
+
   #====================================#
   #services:
   #  django:
