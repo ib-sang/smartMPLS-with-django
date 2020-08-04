@@ -46,13 +46,11 @@ RUN apt-get update \
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
-# Copy only requirements, to cache them in docker layer
-RUN mkdir /code
-
 WORKDIR /code
 
 # Copy using poetry.lock* in case it doesn't exist yet
-COPY ./code/pyproject.toml ./app/poetry.lock* /code
+COPY . ./code/pyproject.toml 
+COPY . ./app/poetry.lock
 
 # Project initialization:
 RUN poetry install --no-root --no-dev
