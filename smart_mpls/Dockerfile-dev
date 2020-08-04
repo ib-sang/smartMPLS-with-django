@@ -34,7 +34,7 @@ RUN apk update \
     libpq-dev \
     wget \
   # Cleaning cache:
-  && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  && apk autoremove  && apt-get clean  && rm -rf /var/lib/apt/lists/* \
 
 
 
