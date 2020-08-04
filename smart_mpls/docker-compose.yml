@@ -4,11 +4,12 @@ services:
   django:
     build: 
       context: .
-      dockerfile: Dockerfile
-    container_name: django
+    
     volumes:
-      - ./log:/log
-
+      - .:/code
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
   #====================================#
   #services:
   #  django:
