@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8-alpine
 LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
 ARG DJANGO_ENV
 
