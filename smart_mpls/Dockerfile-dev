@@ -1,7 +1,7 @@
 FROM python:3.7-alpine
 LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
 
-RUN apt update\
+RUN apt-get update && apt-get install -y\
     && apt install curl\
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python\
     
