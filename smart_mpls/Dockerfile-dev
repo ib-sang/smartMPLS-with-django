@@ -32,7 +32,14 @@ RUN apk update \
     gettext \
     git \
     libpq-dev \
-    wget 
+    wget \
+    gcc \
+    libxslt-dev \
+    libxslt \
+    libxml2 \
+    libxml2-dev \
+    && pip install --no-cache-dir poetry \
+    && poetry config virtualenvs.in-project true
 
 
 
