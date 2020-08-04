@@ -55,7 +55,7 @@ COPY . poetry.lock
 
 # Project initialization:
 
-COPY ./code/entrypoint.sh /docker-entrypoint.sh
+COPY . code/entrypoint.sh  docker-entrypoint.sh
 
 # Setting up proper permissions:
 RUN chmod +x '/docker-entrypoint.sh' \
