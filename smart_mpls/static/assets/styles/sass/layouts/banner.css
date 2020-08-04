@@ -1,0 +1,38 @@
+.banner {
+  padding: 20px 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  border: 1px solid #75f76eb2;
+  color: #868f85;
+  margin-bottom: 20px;
+}
+
+.banner-title {
+  font-size: 16px;
+}
+
+.banner-title::first-letter {
+  text-transform: uppercase;
+}
+
+.banner-arbo {
+  font-size: 14px;
+}
+
+.banner-link {
+  color: #61cf56;
+  opacity: .8;
+}
+
+.banner-link:hover {
+  opacity: 1;
+}
+/*# sourceMappingURL=banner.css.map */
