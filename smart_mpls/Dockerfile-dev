@@ -3,9 +3,6 @@ LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
 
 WORKDIR /app
 
-COPY pyproject.toml .
-COPY poetry.lock .
-
 RUN apk add --no-cache \
         build-base \
         libffi-dev \
@@ -17,6 +14,9 @@ RUN apk add --no-cache \
         libxml2-dev \
     && pip install --no-cache-dir poetry \
     && poetry config virtualenvs.in-project true
+
+COPY pyproject.toml .
+COPY poetry.lock .
 
 
 EXPOSE 3000
