@@ -46,6 +46,10 @@ RUN apt-get update \
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
+# Copy only requirements, to cache them in docker layer
+
+WORKDIR /code
+COPY ./code/ poetry.lock 
 
 
 
