@@ -24,8 +24,7 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
 WORKDIR /app
 
 # System deps:
-RUN apk update \
-  && apk add --no-cache \
+RUN  apk add --no-cache \
     bash \
     build-essential \
     curl \
