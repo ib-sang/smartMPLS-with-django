@@ -48,8 +48,8 @@ RUN apt-get update \
 
 # Copy only requirements, to cache them in docker layer
 WORKDIR /code
-COPY . poetry.lock
-COPY . pyproject.toml
+COPY . poetry.lock /code/
+COPY . pyproject.toml /code/
 
 
 
