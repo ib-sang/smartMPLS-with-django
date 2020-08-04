@@ -10,7 +10,7 @@ RUN apt-get update \
 
 
 
-RUN python -m venv .venv \
+RUN python3 -m venv .venv \
     && poetry install --no-dev --no-interaction
 
 
