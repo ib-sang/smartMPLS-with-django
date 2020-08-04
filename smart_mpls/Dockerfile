@@ -49,10 +49,10 @@ RUN apt-get update \
 # Copy only requirements, to cache them in docker layer
 RUN mkdir /code
 
-WORKDIR /code
-COPY . /code/pyproject.toml
 
 
+# Copy using poetry.lock* in case it doesn't exist yet
+COPY ./app/pyproject.toml ./app/poetry.lock* /code
 
 # Project initialization:
 RUN poetry install 
