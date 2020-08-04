@@ -46,9 +46,6 @@ RUN apt-get update \
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
-
-WORKDIR /code
-
 # Copy using poetry.lock* in case it doesn't exist yet
 COPY . pyproject.toml 
 COPY . poetry.lock
@@ -58,6 +55,6 @@ COPY . poetry.lock
 
 EXPOSE 3000
 
-WORKDIR ./smart_mpls
+WORKDIR /app/smart_mpls
 
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
