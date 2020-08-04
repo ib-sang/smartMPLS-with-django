@@ -28,11 +28,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*\
+    && pip install "poetry==$POETRY_VERSION" && poetry --version
 
-EXPOSE 8000
 
-CMD python -c "print('hello world')"
 EXPOSE 3000
 
 
