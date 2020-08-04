@@ -50,8 +50,8 @@ RUN apt-get update \
 WORKDIR /code
 
 # Copy using poetry.lock* in case it doesn't exist yet
-COPY . /pyproject.toml 
-COPY . /poetry.lock
+COPY . pyproject.toml 
+COPY . poetry.lock
 
 # Project initialization:
 RUN poetry install --no-root --no-dev
