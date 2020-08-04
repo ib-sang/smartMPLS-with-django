@@ -46,7 +46,7 @@ COPY . pyproject.toml
 COPY . poetry.lock
 
 
-RUN poetry run pip install -U pip
+RUN /app/poetry run pip install -U pip
 
 EXPOSE 3000
 
