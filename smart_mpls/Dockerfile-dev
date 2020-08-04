@@ -3,6 +3,13 @@ LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
 
 RUN apt-get clean && apt-get update
 
+RUN apt-get update \
+    && apt install curl\
+    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+    
+
+
+
 
 EXPOSE 3000
 
