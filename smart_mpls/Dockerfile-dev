@@ -11,9 +11,16 @@ ENV YOUR_ENV=${YOUR_ENV} \
 
 WORKDIR /app
 
-
 # System deps:
-RUN pip install "poetry==$POETRY_VERSION"
+RUN apt-get update \
+  && apt-get install --no-install-recommends -y \
+    bash \
+    build-essential \
+    curl \
+    gettext \
+    git \
+    libpq-dev \
+    wget \
 
 
 
