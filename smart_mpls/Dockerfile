@@ -20,7 +20,6 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
-WORKDIR /app
 
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
@@ -46,7 +45,6 @@ RUN apt-get update \
   # https://github.com/python-poetry/poetry
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
-WORKDIR /code
 
 # Copy using poetry.lock* in case it doesn't exist yet
 COPY . pyproject.toml 
@@ -57,6 +55,5 @@ COPY . poetry.lock
 
 EXPOSE 3000
 
-WORKDIR /app/smart_mpls
 
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
