@@ -15,7 +15,7 @@ services:
   #      context: .
   #      dockerfile: Dockerfile
   #    container_name: django
-  #    image: mplsautomation:dev
+  #    image: smart_mpls:dev
   #    environment:
   #      - PYTHONUNBUFFERED=1
   #    volumes:
@@ -38,14 +38,14 @@ services:
 #      args:
 #        STATIC_URL: "/static/"
 #    container_name: celery
-#    image: mplsautomation
+#    image: smart_mpls
 #    command: >-
 #      poetry run celery worker
-#      -A mplsautomation#
+#      -A smart_mpls#
 #      --loglevel=info --pool=gevent --concurrency=15
 #    volumes:
 #      - ./log:/log
-#      - ./mplsautomation:/app/mplsautomation
+#      - ./smart_mpls:/app/smart_mpls
 #    depends_on:
 #      - redis
 #======================================
@@ -56,10 +56,10 @@ services:
 #    image: netprog-stream-django:dev
 #    command: >-
 #      poetry run celery worker
-#      -A mplsautomation
+#      -A smart_mpls
 #      --loglevel=info --pool=gevent --concurrency=15
 #    volumes:
 #      - ./log:/log
-#      - ./mplsautomation:/app/mplsautomation
+#      - ./smart_mpls:/app/smart_mpls
 #    depends_on:
 #      - redis

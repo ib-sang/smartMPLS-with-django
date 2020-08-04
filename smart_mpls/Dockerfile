@@ -48,7 +48,8 @@ RUN apt-get update \
 
 # Copy only requirements, to cache them in docker layer
 WORKDIR /code
-COPY ./poetry.lock ./pyproject.toml /code/
+COPY . ./poetry.lock\
+    && . ./pyproject.toml /code/
 
 
 # Project initialization:
@@ -59,7 +60,7 @@ RUN echo "$DJANGO_ENV" \
   # Cleaning poetry installation's cache for production:
   && if [ "$DJANGO_ENV" = 'production' ]; then rm -rf "$POETRY_CACHE_DIR"; fi
 
-COPY ./docker/django/entrypoint.sh /docker-entrypoint.sh
+COPY ./smart_mpls/entrypoint.sh /docker-entrypoint.sh
 
 # Setting up proper permissions:
 RUN chmod +x '/docker-entrypoint.sh' \
