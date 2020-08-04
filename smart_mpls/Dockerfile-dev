@@ -1,4 +1,4 @@
-FROM python:3.6.6-alpine3.7
+FROM python:3.6.6-alpine
 LABEL maintainer="Baba Sangare <sibrahima250@gmail.com>"
 ENV YOUR_ENV=${YOUR_ENV} \
   PYTHONFAULTHANDLER=1 \
