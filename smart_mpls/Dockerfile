@@ -46,6 +46,7 @@ RUN apt-get update \
   # https://github.com/python-poetry/poetry
   && pip install "poetry==$POETRY_VERSION" && poetry --version
 
+WORKDIR /code
 
 # Copy using poetry.lock* in case it doesn't exist yet
 COPY . pyproject.toml 
