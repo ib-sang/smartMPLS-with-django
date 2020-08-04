@@ -21,6 +21,7 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
 WORKDIR /app
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-setuptools \
         python3-pip \
@@ -30,16 +31,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*\
-    build-base \
-        libffi-dev \
-        openssl-dev \
-        gcc \
-        libxslt-dev \
-        libxslt \
-        libxml2 \
-        libxml2-dev \
-    && pip install --no-cache-dir poetry \
-    && poetry config virtualenvs.in-project true
+    && wget "https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+    && tar -C /usr/local/bin -xzvf "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+    && rm "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" && dockerize --version \
+    # Installing `tini` utility:
+    # https://github.com/krallin/tini
+    && wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini" \
+    && chmod +x /usr/local/bin/tini && tini --version \
+    # Installing `poetry` package manager:
+    # https://github.com/python-poetry/poetry
+    && pip install "poetry==$POETRY_VERSION" && poetry --version
 
 
 WORKDIR /code
