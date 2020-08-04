@@ -58,6 +58,6 @@ COPY . poetry.lock
 
 EXPOSE 3000
 
-WORKDIR smart_mpls
+WORKDIR ./smart_mpls
 
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
