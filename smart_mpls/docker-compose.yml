@@ -9,7 +9,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./log:/log
-      - .:/code
+      - .:./smart_mpls
     ports:
       - "3000:3000"
   #====================================#

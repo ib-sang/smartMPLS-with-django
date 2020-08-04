@@ -20,8 +20,43 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry'
 
-RUN mkdir /code
+WORKDIR /app
+
+RUN apt-get update \
+  && apt-get install --no-install-recommends -y \
+    bash \
+    build-essential \
+    curl \
+    gettext \
+    git \
+    libpq-dev \
+    wget \
+  # Cleaning cache:
+  && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  # Installing `dockerize` utility:
+  # https://github.com/jwilder/dockerize
+  && wget "https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+  && tar -C /usr/local/bin -xzvf "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" \
+  && rm "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz" && dockerize --version \
+  # Installing `tini` utility:
+  # https://github.com/krallin/tini
+  && wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini" \
+  && chmod +x /usr/local/bin/tini && tini --version \
+  # Installing `poetry` package manager:
+  # https://github.com/python-poetry/poetry
+  && pip install "poetry==$POETRY_VERSION" && poetry --version
+
 WORKDIR /code
-COPY requirements.txt /code/
-RUN pip install -r requirements.txt
-COPY . /code/
+
+# Copy using poetry.lock* in case it doesn't exist yet
+COPY . pyproject.toml 
+COPY . poetry.lock
+
+# Project initialization:
+
+
+EXPOSE 3000
+
+WORKDIR /app/smart_mpls
+
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:3000"]
