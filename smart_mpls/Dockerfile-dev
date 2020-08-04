@@ -4,12 +4,12 @@ WORKDIR /app
 
 RUN apt-get clean && apt-get update
 
-RUN apk add --no-cache gcc libffi-dev musl-dev 
 
 RUN apt-get update \
     && apt install curl\
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
     
+COPY poetry.lock pyproject.toml /code/
 
 RUN python -m venv .venv
 
