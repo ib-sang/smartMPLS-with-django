@@ -47,8 +47,8 @@ RUN apt-get update \
 
 
 # Copy only requirements, to cache them in docker layer
-WORKDIR /smart_mpls
-COPY ./poetry.lock ./pyproject.toml /smart_mpls/
+WORKDIR /code
+COPY ./poetry.lock ./pyproject.toml /code/
 
 
 # Project initialization:
