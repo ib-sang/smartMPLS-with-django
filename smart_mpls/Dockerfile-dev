@@ -40,13 +40,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxml2 \
         libxml2-dev \
     && pip install --no-cache-dir poetry \
-    && poetry config virtualenvs.in-project true
-
+    && poetry config virtualenvs.in-project true\
+    && poetry run pip install -U pip
+    
 COPY . pyproject.toml
 COPY . poetry.lock
 
-
-RUN /app/poetry run pip install -U pip
 
 EXPOSE 3000
 
