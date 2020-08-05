@@ -1,11 +1,11 @@
 version: "3.3"
 
 services:
-  smart_mpls:
+  django:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000  
+    command: python testconfig.py 
     volumes:
       - ./smart_mpls:/code 
     ports:
