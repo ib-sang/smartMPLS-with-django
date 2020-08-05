@@ -5,7 +5,9 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: python testconfig.py 
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python manage.py runserver 0.0.0.0:3000 
     volumes:
       - ./smart_mpls:/code 
     ports:
