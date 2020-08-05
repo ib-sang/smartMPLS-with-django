@@ -47,11 +47,11 @@ RUN apt-get update \
 
 
 # Copy using poetry.lock* in case it doesn't exist yet
-COPY . pyproject.toml 
-COPY . poetry.lock
 
-# Project initialization:
-RUN poetry run pip install -U pip
+COPY . pyproject.toml 
+COPY . poetry.lock 
+
+
 
 EXPOSE 3000
 
