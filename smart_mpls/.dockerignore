@@ -1,8 +1,0 @@
-*
-!smart_mpls
-!manage.py
-!requirements.txt
-!wait-for
-!pyproject.toml .
-!poetry.lock .
-.venv/
