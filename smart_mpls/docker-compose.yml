@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  django:
+  smart_mpls:
     build: 
       context: smart_mpls
       dockerfile: Dockerfile
