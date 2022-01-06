@@ -13,7 +13,7 @@ django = "^3.0.8"
 napalm = "^3.1.0"
 textfsm = "^1.1.0"
 terminal = "^0.4.0"
-celery = "^4.4.7"
+celery = "^5.2.2"
 gevent = "^20.6.2"
 
 [tool.poetry.dev-dependencies]
