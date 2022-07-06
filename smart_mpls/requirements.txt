@@ -35,7 +35,7 @@ junos-eznc==2.4.1
 keyring==20.0.1
 kombu==4.6.8
 lockfile==0.12.2
-lxml==4.5.0
+lxml==4.9.1
 MarkupSafe==1.1.1
 msgpack==1.0.0
 multidict==4.7.5
