@@ -19,7 +19,7 @@ colorama==0.4.3
 cryptography==2.9.2
 Django==3.0.6
 django-celery-beat==2.0.0
-django-celery-results==1.2.1
+django-celery-results==2.4.0
 django-redis==4.11.0
 django-timezone-field==4.0
 dnspython==1.16.0
