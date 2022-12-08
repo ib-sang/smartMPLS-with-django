@@ -9,7 +9,7 @@ billiard==3.6.3.0
 CacheControl==0.12.6
 cachy==0.3.0
 celery==4.4.2
-certifi==2020.4.5.1
+certifi==2022.12.7
 cffi==1.14.0
 chardet==3.0.4
 ciscoconfparse==1.5.4
